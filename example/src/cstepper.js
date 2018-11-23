@@ -110,7 +110,7 @@ class Steps extends Component {
     },
     {
       image: "./img/estimate.png",
-      name: "Prisuppskattning",
+      name: "Prisuppskattning färdig",
       arrow: "",
       stepindex: 5
 

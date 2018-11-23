@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import DragabbleComponent from './components/DragabbleComponent'
 let lastId = 0;
 var highletstyle = {
   fontSize: '15'
@@ -17,7 +18,6 @@ const ColoredLine = ({ color }) => (
     }}
   />
 );
-
 
 class RoofQuestions extends Component {
   constructor(props) {
@@ -44,10 +44,11 @@ class RoofQuestions extends Component {
         ]
       }
     ];
-    this.state = { stepIndex: 1, selectedValue: '', selectedValueTwo: '', angle: 45, left: '135px' }
-    this.handleClick = this.handleClick.bind(this);
 
+    this.state = { modalIsOpen: false, stepIndex: 1, selectedValue: '', selectedValueTwo: '', angle: 45, left: '135px', validationOne: false, validation: false }
+    this.handleClick = this.handleClick.bind(this);
     this.handleClickTwo = this.handleClickTwo.bind(this);
+    this.validate = this.validate.bind(this);
     this.scrollable = this.scrollable.bind(this);
     this.selectedAnswers = [];
   }
@@ -61,7 +62,7 @@ class RoofQuestions extends Component {
       fontSize: '16px'
     }
     this.selectedAnswers.push(value);
-    this.setState({ selectedValue: selectedValue });
+    this.setState({ selectedValue: selectedValue, validationOne: false });
   }
 
   handleClickTwo(value2, index, id) {
@@ -72,9 +73,16 @@ class RoofQuestions extends Component {
       fontSize: '16px'
     }
     this.selectedAnswers.push(value2);
-    this.setState({ selectedValueTwo: selectedValue });
+    this.setState({ selectedValueTwo: selectedValue,  validation: false });
   }
-
+  validate() {
+    if(!this.state.selectedValue) {
+      this.setState({ validationOne: true });
+    } else if (!this.state.selectedValueTwo) {
+      this.setState({ validation: true });
+    }
+  
+  }
   scrollable(e) {
     if (e.nativeEvent.offsetX > 270) {
       this.setState({ left: '270px' });
@@ -85,8 +93,6 @@ class RoofQuestions extends Component {
       this.setState({ angle: Math.ceil(val / 5) * 5 })
     }
   }
-
-  
 
   render() {
     return (
@@ -100,7 +106,7 @@ class RoofQuestions extends Component {
           <div className="col-sm-2"></div>
           <div className="col-sm-10 panding_no" id="padding-b">
             <div className="col-sm-4 panding_no">
-              <QuizArea handleClick={this.handleClick} dataSet={this.dataSet[0]} selected={this.state.selectedValue} style={highletstyle} />
+              <QuizArea handleClick={this.handleClick} validation={this.state.validationOne} dataSet={this.dataSet[0]} selected={this.state.selectedValue} style={highletstyle} />
 
             </div>
             <div className="col-md-6">
@@ -116,7 +122,7 @@ class RoofQuestions extends Component {
           <div className="col-sm-2"></div>
           <div className="col-sm-10 panding_no" id="padding-b">
             <div className="col-sm-4 panding_no">
-              <QuizArea handleClick={this.handleClickTwo} dataSet={this.dataSet[1]} selected={this.state.selectedValueTwo} style={highletstyle2} />
+              <QuizArea handleClick={this.handleClickTwo} validation={this.state.validation} dataSet={this.dataSet[1]} selected={this.state.selectedValueTwo} style={highletstyle2} />
             </div>
             <div className="col-md-6">
               <img style={{
@@ -138,27 +144,20 @@ class RoofQuestions extends Component {
                 <div> <span>- Dra i reglaget för att ändra takets ungefärliga taklutning</span></div>
               </div>
             </div>
-            <div className="col-md-9 scroll" style={{ textAlign: 'center', padding: '20px' }}>
-              <div id="ratio" >
-                <div id="ratio-center"></div>
-                <div id="ratio-left" className={`rotate-left-${this.state.angle}`}></div>
-                <div id="ratio-right" className={`rotate-right-${this.state.angle}`}></div>
-              </div>
-              <div id="ratio-value">{this.state.angle}°</div>
-              <input type="hidden" name="ratioValue" id="ratioValue" value="35" />
-              <div id="ratio-slider" className="slider-chart ui-slider" onClick={this.scrollable}>
-                <a style={{ outline: 'none', border: 'none' }} onClick={this.scrollable}>
-                  <div className="ui-slider-handle ui-slider-handle-active" style={{ left: this.state.left }}></div></a></div>
-            </div>
+            <DragabbleComponent/>
           </div>
 
           <ColoredLine color="black" />
-          <div className="col-md-12 estimate" style={{ textAlign: 'center' }}>
-            <button onClick={this.props.queval.bind(this, this.state.selectedValue, this.state.selectedValueTwo, this.state.angle)} className="submit" >Nästa</button>
+          <div className="col-md-12 estimate" style={{ textAlign: 'center' }} >
+            {this.state.selectedValue && this.state.selectedValueTwo ? (
+              <button onClick={this.props.queval.bind(this, this.state.selectedValue, this.state.selectedValueTwo, this.state.angle)} className="submit" >Nästa</button>
+            ) : (
+                <button onClick={this.validate} className="submit" >Nästa</button>
+              )}
+
           </div>
         </div>
       </div>
-
     )
   }
 }
@@ -171,7 +170,18 @@ function Question(props) {
     padding: '15px 0 15px 0'
   }
   return (
+    <div>
     <h1 style={style}>{props.dataSet.question}</h1>
+    {props.validation ? (
+          <div style={{
+            border: '1px solid #ed5565',
+            backgroundColor: '#fcdfe2',
+            color: '#ed5565', 
+            margin: '0.5em 0',
+            padding: '0.5em'}}><span>Please select the answer</span></div>
+        
+    ) : (null)}
+  </div>
   )
 }
 
@@ -220,7 +230,7 @@ function AnswerList(props) {
 function QuizArea(props) {
   return (
     <div>
-      <Question dataSet={props.dataSet} />
+      <Question dataSet={props.dataSet} validation={props.validation}/>
       <AnswerList dataSet={props.dataSet} style={props.style} handleClick={props.handleClick} selected={props.selected} />
     </div>
   )

@@ -46,7 +46,8 @@ var taskConfig = {
 			'progresslayer.js',
 			'styleComponent.js',	
 			'userregistration.js',
-			'roof_questions.js'
+			'roof_questions.js',
+			'components/DragabbleComponent.js'
 		],
 		less: [
 			'example.less',

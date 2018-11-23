@@ -399,10 +399,11 @@ class Areaestimate extends Component {
                             <div className="col-sm-8" style={{ paddingTop: 0 }}><div id="estimateright">
                                 <h2 ><b>Ditt prisförslag är färdigt</b></h2>
                                 <h3 id="eststep2"><strong>Adress </strong>: {this.props.address}</h3>
+                                <h3 id="eststep2"><strong>Fastighetstyp: <b>{this.props.property_type}</b></strong></h3>
+                                <h3 id="eststep2"><strong>Taklutning: <b>{this.props.floors}</b></strong></h3>
                                 <h3 id="eststep2"><b>Att byta ditt tak till ett <b>{this.props.material}</b> skulle kosta uppskattningsvis:
 </b></h3>
-                                <h3 id="eststep2"><b>Fastighetstyp: <b>{this.props.property_type}</b></b></h3>
-                                <h3 id="eststep2"><b>Taklutning: <b>{this.props.floors}</b></b></h3>
+                               
 
 
                                 <Solarpanel data={this.props.material} />
