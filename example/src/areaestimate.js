@@ -1,31 +1,29 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom';
+import Modal from 'react-modal';
 var CurrencyFormat = require('react-currency-format');
-var Loader = require('react-loader');
-//var mainurl=require('config.js');
-var options = {
-    lines: 8,
-    length: 20,
-    width: 10,
-    radius: 20,
-    scale: 1.00,
-    corners: 1,
-    color: '#2e6da4',
-    opacity: 0.25,
-    rotate: 0,
-    height: 7,
-    direction: 1,
-    speed: 1,
-    trail: 60,
-    fps: 20,
-    zIndex: 2e9,
-    top: '50%',
-    left: '50%',
-    shadow: false,
-    hwaccel: false,
-    position: 'absolute'
-};
+//var BarChartComponent = require('./components/BarChart');
+var ESaving = require('./components/ESaving');
+var PanelTypes = require('./components/PanelBatteryTypes');
+var TimeBooking = require('./components/DatePicker');
+const customStyles = {
+    content: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        border: '2px solid #8ee2ae',
+        transform: 'translate(-50%, -50%)',
+        padding: '10px 15px 23px',
+        fontSize: '16px',
+        borderRadius: '20px',
+        background: 'rgb(255, 255, 255)',
+        overflow: 'auto',
+        minHeight: '400px',
+        width: '40%'
+    }
+}
+
 const matstyle = {
     padding: 10,
     margin: 5,
@@ -40,20 +38,40 @@ const matstyle = {
         cursor: "pointer"
     }
 }
-const margin = {
-    marginTop: "10px"
-}
-const formleft = {
-    paddingLeft: 0
-}
-let Roofprice = 0;
-let costofmaterial = 0;
-let costoflabour = 0;
-let costofcontainer = 0;
-let area = 0;
+
+let Roofprice = 0, costoflabour = 0;
+let data = [
+    { letter: 'Jan', productivity: 100 },
+    { letter: 'Feb', productivity: 200 },
+    { letter: 'Mar', productivity: 1000 },
+    { letter: 'Apr', productivity: 1500 },
+    { letter: 'May', productivity: 1800 },
+    { letter: 'Jun', productivity: 2000 },
+    { letter: 'Jul', productivity: 2300 },
+    { letter: 'Aug', productivity: 2094 },
+    { letter: 'Sep', productivity: 2966 },
+    { letter: 'Oct', productivity: 2153 },
+    { letter: 'Nov', productivity: 2772 },
+    { letter: 'Dec', productivity: 2025 }]
+var TaxOnInstallation,
+    soalrIncentives,
+    batteryCost,
+    taxOnBattery,
+    BatteryCostAfterTax,
+    batteryIncentives,
+    comissionOnBatteryIncentives,
+    digisolarComission,
+    finalCost,
+    capacity, panelPrice, solarPanelsCount, CostOfSolarPanel,
+    costPerOptimizer = 408, costOfInverterPrice, totalInstalledPowerInkw,
+    CostOfOptimizer, skylift, CostOfKit = 800, CostOfMountingSystem,
+    CostOfCable = 540, transportCost,
+    laborCost, electricianCost = 5000, digisolarComission = 10000, superVisorCommission = 15000,
+    installationBeforeTaxNoComm, installationBeforeTax, installationAfterIncentives, displayPrice, batteryAfterIncentive;
 class Areaestimate extends Component {
     constructor(props) {
         super(props);
+        window.scrollTo(0, 0);
         this.state = {
             stepIndex: 1,
             finished: false,
@@ -78,38 +96,369 @@ class Areaestimate extends Component {
             responceerrorsignup: "",
             date: new Date(),
             loaded: false,
-            text: 'Estimerar pris...'
+            text: 'Estimerar pris...',
+            color: 'rgb(46, 109, 164)',
+            emailtext: 'Offert per mail',
+            popup: false,
+            panelpopup: false,
+            modalIsOpen: false,
+            PanelModalIsOpen: false,
+            closeUpdatePanelmodal: false,
+            datepicker: true,
+            calenderIndex: 1,
+            panelsCount: parseInt(this.props.panelsCount),
+            battery: this.props.battery,
+            panel: this.props.panel,
+            e_consumption: this.props.e_consumption,
+            packetName: this.props.packetName,
+            elpris: 0.9,
+            elprisökning: 2,
+            updation: false,
+            annualProduction: this.props.annualoutput,
+            availableslots: ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '17:00']
         }
-        costofmaterial = parseFloat(this.props.materialcost) * parseFloat(this.props.area);
-        costoflabour = parseFloat(this.props.roofstylecost) * parseFloat(this.props.area);
-        area = parseFloat(this.props.area);
-
-        if (this.props.material == "Papptak") {
-            costofmaterial = 85 * parseFloat(this.props.area);
-            if (this.props.area < 70) {
-                costoflabour = 220 * parseFloat(this.props.area);
-            } else if (this.props.area > 70 && this.props.area < 1000) {
-                costoflabour = 190 * parseFloat(this.props.area);
-            } else if (this.props.area > 1000) {
-                costoflabour = 100 * parseFloat(this.props.area);
-            }
+        if (this.props.logedin) {
+            setTimeout(() => {
+                this.setState({
+                    text: 'Letar leverantörer i ditt område'
+                })
+            }, 2000);
+            setTimeout(() => {
+                this.setState({
+                    loaded: true
+                })
+            }, 5000);
         }
-        costofcontainer = 8000;
-        Roofprice = parseFloat(costofcontainer) + parseFloat(costoflabour) + parseFloat(costofmaterial);
-        if (this.props.logedin == true) {
-            if (this.props.area == "" || this.props.style == "" || this.props.material == "") {
+        this.modalpopup = this.modalpopup.bind(this)
+        Modal.setAppElement('body');
+        this.openModal = this.openModal.bind(this);
+        this.afterOpenModal = this.afterOpenModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.nextPage = this.nextPage.bind(this);
+        this.previous = this.previous.bind(this);
+        this.modalPanelpopup = this.modalPanelpopup.bind(this);
+        this.openPanelModal = this.openPanelModal.bind(this);
+        this.afterOpenPanelModal = this.afterOpenPanelModal.bind(this);
+        this.closePanelModal = this.closeModal.bind(this);
+        this.initialValues = this.initialValues.bind(this);
+        if (this.props.logedin === true) {
+            if (this.props.area === "" || this.props.material === "") {
                 alert("Something Went wrong please try again");
-
             } else {
-                this.SendEstimation(this);
+                this.initialValues(this.state.panel, this.state.battery, this.state.panelsCount);
             }
+        }
+    }
+
+    initialValues(p, bat, count) {
+        let _self = this;
+        if (p === 'Standard' || _self.state.panel === 'Standard') {
+            capacity = 270;
+            panelPrice = 1180;
+        } else if (p === 'Premium' || _self.state.panel === 'Premium') {
+            capacity = 320;
+            panelPrice = 1400;
+        }
+
+        if (count) {
+            solarPanelsCount = parseInt(count);
+        } else if (_self.state.panelsCount) {
+            solarPanelsCount = parseInt(_self.state.panelsCount);
+        } else {
+            solarPanelsCount = (parseInt(_self.state.e_consumption)).replace(' kWh', '') / capacity;
+        }
+        CostOfSolarPanel = solarPanelsCount * panelPrice;
+        costOfInverterPrice = inverterPrice();
+        totalInstalledPowerInkw = (solarPanelsCount * capacity) / 1000;
+        function inverterPrice() {
+            var costOfInverter = solarPanelsCount * capacity;
+            if (costOfInverter <= 4000) {
+                return 9560;
+            } else if (costOfInverter >= 4001 && costOfInverter <= 5000) {
+                return 9660;
+            } else if (costOfInverter >= 5001 && costOfInverter <= 7000) {
+                return 11500;
+            } else if (costOfInverter >= 7001 && costOfInverter <= 8000) {
+                return 11830;
+            } else if (costOfInverter >= 8001 && costOfInverter <= 10000) {
+                return 12760;
+            } else if (costOfInverter >= 10001 && costOfInverter <= 15000) {
+                return 11350;
+            } else if (costOfInverter >= 15001 && costOfInverter <= 17000) {
+                return 11620;
+            } else if (costOfInverter >= 17001 && costOfInverter <= 25000) {
+                return 16100;
+            } else if (costOfInverter >= 25001 && costOfInverter <= 27600) {
+                return 16400;
+            } else {
+                return 20000;
+            }
+        }
+
+        CostOfOptimizer = solarPanelsCount * costPerOptimizer;
+        CostOfMountingSystem = solarPanelsCount * mounting();
+        function mounting() {
+            switch (_self.props.material) {
+                case 'Lertegeltak':
+                    return 260;
+                case 'Plåt':
+                    return 200;
+                case 'Betongtegeltak':
+                    return 260;
+                case 'Falsad plåt / Bandad Plåt':
+                    return 200;
+                case 'Papptak':
+                    return 300;
+            }
+        }
+
+        function transportingCost() {
+            switch (true) {
+                case (10 <= solarPanelsCount && solarPanelsCount <= 24):
+                    return 3000;
+                case (25 <= solarPanelsCount && solarPanelsCount <= 44):
+                    return 3700;
+                case (45 <= solarPanelsCount && solarPanelsCount <= 64):
+                    return 4500;
+                case (65 <= solarPanelsCount && solarPanelsCount <= 84):
+                    return 5700;
+                case (85 <= solarPanelsCount && solarPanelsCount <= 104):
+                    return 7000;
+                case (105 <= solarPanelsCount && solarPanelsCount <= 124):
+                    return 8000;
+                case (125 <= solarPanelsCount && solarPanelsCount <= 144):
+                    return 9700;
+                case (145 <= solarPanelsCount && solarPanelsCount <= 164):
+                    return 11000;
+                case (165 <= solarPanelsCount && solarPanelsCount <= 184):
+                    return 11000;
+                case (185 <= solarPanelsCount && solarPanelsCount <= 204):
+                    return 12000;
+                case (185 < solarPanelsCount):
+                    let calculatedPrice = 25 * (solarPanelsCount - 205);
+                    return 12000 + calculatedPrice;
+            }
+        }
+
+        function labourCost() {
+            switch (true) {
+                case (solarPanelsCount <= 12):
+                    return 12000;
+                case (13 <= solarPanelsCount && solarPanelsCount <= 20):
+                    return 13000;
+                case (21 <= solarPanelsCount && solarPanelsCount <= 24):
+                    return 14000;
+                case (25 <= solarPanelsCount && solarPanelsCount <= 28):
+                    return 1500;
+                case (29 <= solarPanelsCount && solarPanelsCount <= 32):
+                    return 16000;
+                case (33 <= solarPanelsCount && solarPanelsCount <= 36):
+                    return 17000;
+                case (37 <= solarPanelsCount && solarPanelsCount <= 40):
+                    return 18000;
+                case (41 <= solarPanelsCount && solarPanelsCount <= 48):
+                    return 19000;
+                case (49 <= solarPanelsCount && solarPanelsCount <= 60):
+                    return 20000;
+                case (61 <= solarPanelsCount && solarPanelsCount <= 72):
+                    return 22000;
+                case (73 <= solarPanelsCount && solarPanelsCount <= 84):
+                    return 24000;
+                case (84 < solarPanelsCount):
+                    let calculatedPrice = 270 * (solarPanelsCount - 84);
+                    return 24000 + calculatedPrice;
+            }
+        }
+        if (this.props.floors === '2 plan' || this.props.floors === '1 plan') {
+            skylift = 0;
+        } else {
+            skylift = 5200;
+        }
+        transportCost = transportingCost();
+        laborCost = labourCost();
+        installationBeforeTaxNoComm = CostOfSolarPanel + CostOfOptimizer + costOfInverterPrice + CostOfMountingSystem +
+            CostOfKit + CostOfCable + transportCost + laborCost + skylift + electricianCost;
+        superVisorCommission = installationBeforeTaxNoComm * 11 / 100
+        digisolarComission = installationBeforeTaxNoComm * 11 / 100;
+        if (superVisorCommission > 12500) {
+            superVisorCommission = 12500
+        }
+        if (digisolarComission > 12500) {
+            digisolarComission = 12500
+        }
+        installationBeforeTax = installationBeforeTaxNoComm + superVisorCommission + digisolarComission;
+        TaxOnInstallation = (installationBeforeTax * 25) / 100;
+        Roofprice = installationBeforeTax + TaxOnInstallation;
+        displayPrice = Roofprice * 93 / 100;
+        soalrIncentives = displayPrice * 0.2;
+        if (bat === 'Premium') {
+            batteryCost = 84485;
+            batteryIncentives = 50000;
+        } else if (bat === 'Inga') {
+            batteryCost = 0;
+            batteryIncentives = 0;
+        }
+        taxOnBattery = (batteryCost * 25) / 100;
+        BatteryCostAfterTax = batteryCost + taxOnBattery;
+        comissionOnBatteryIncentives = 15000;
+        installationAfterIncentives = displayPrice - soalrIncentives;
+        batteryAfterIncentive = BatteryCostAfterTax - batteryIncentives;
+        finalCost = installationAfterIncentives + batteryAfterIncentive
+        this.SendEstimation(this);
+    }
+
+    closePanelModal() {
+        this.setState({ PanelModalIsOpen: false, panelpopup: false, closeUpdatePanelmodal: false });
+    }
+
+    modalPanelpopup() {
+        this.setState({ panelpopup: true, PanelModalIsOpen: true })
+    }
+
+    openPanelModal() {
+    }
+
+    afterOpenPanelModal() {
+    }
+
+    openModal() {
+    }
+
+    update(panel, battery, Count, packetName, annualOpt) {
+        this.setState({
+            closeUpdatePanelmodal: true,
+            packetName: packetName,
+            battery: battery,
+            panel: panel,
+            panelsCount: parseInt(Count),
+            annualProduction: parseInt(annualOpt).toFixed(0)
+        });
+        sessionStorage.setItem('battery', battery);
+        sessionStorage.setItem('panel', panel);
+        sessionStorage.setItem('panelsCount', Count);
+        sessionStorage.setItem('packetName', packetName);
+        if (panel.length && battery.length) {
+            var token = localStorage.getItem("token");
+            var email = JSON.parse(localStorage.getItem("userdata")).email;
+            var payload = {
+                area: this.props.area,
+                coordinates: JSON.stringify(this.props.coordinates),
+                slope: this.props.style,
+                estimatedamount: Roofprice,
+                material: this.props.material,
+                slopecost: this.props.roofstylecost,
+                materialcost: this.props.materialcost,
+                labour: costoflabour,
+                address: this.props.address,
+                email: email,
+                power: this.props.power,
+                e_consumption: this.state.e_consumption,
+                floors: this.props.floors,
+                roof_pitch: this.props.roof_pitch,
+                property_type: this.props.property_type,
+                battery: battery,
+                panel: panel,
+                panelsCount: Count,
+                solar_installation_cost: installationBeforeTaxNoComm,
+                supervisor_commission: superVisorCommission,
+                digisolar_commission: digisolarComission,
+                solar_installation_With_commission: installationBeforeTax,
+                solar_installation_after_tax: Roofprice,
+                display_cost: displayPrice,
+                solar_incentives: soalrIncentives,
+                battery_cost: batteryCost,
+                battery_cost_after_tax: BatteryCostAfterTax,
+                battery_incentives: comissionOnBatteryIncentives,
+                solar_intallation_after_commission: installationAfterIncentives,
+                battery_after_incentives: batteryAfterIncentive,
+                final_cost: finalCost
+            }
+
+            fetch('users/estimation', {
+                method: "post",
+                crossDomain: true,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    "Access-Control-Request-Headers": "*",
+                    "Access-Control-Request-Method": "*",
+                }, body: 'json=' + JSON.stringify(payload) + '&token=' + token
+            }).then(function (response) {
+                return response;
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                localStorage.setItem('userdata', JSON.stringify(data));
+            })
+        }
+        this.initialValues(panel, battery, Count);
+    }
+
+    afterOpenModal() {
+    }
+
+    closeModal() {
+        this.setState({ modalIsOpen: false, PanelModalIsOpen: false, closeUpdatePanelmodal: false });
+    }
+
+    modalpopup() {
+        this.setState({ popup: true, modalIsOpen: true, calenderIndex: 1 })
+    }
+
+    nextPage(date, time) {
+        if (this.state.calenderIndex > 3) {
+            this.closeModal.bind(this);
+        }
+        else if (this.state.calenderIndex === 2) {
+            let _self = this,
+                userdata = JSON.parse(localStorage.getItem('userdata'));
+            if (userdata && userdata._id) {
+                var bookPayload = {
+                    "contractor_id": "5d1350199880ff94115dedde",
+                    "user_id": userdata._id,
+                    "booking_slot_date": date,
+                    "booking_slot_time": time
+                }
+                fetch('/contractor/book-appointment', {
+                    method: "post",
+                    crossDomain: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Request-Headers": "*",
+                        "Access-Control-Request-Method": "*",
+
+                    },
+                    body: JSON.stringify(bookPayload)
+                }).then(function (res) {
+                    return res.json();
+                }).then(function (result) {
+                    _self.setState({
+                        availableslots: data,
+                        datepicker: false, calenderIndex: parseInt(_self.state.calenderIndex) + 1
+                    })
+                })
+            }
+        }
+        else {
+            this.setState({ datepicker: false, calenderIndex: parseInt(this.state.calenderIndex) + 1 })
+        }
+    }
+
+    previous() {
+        this.setState({ calenderIndex: this.state.calenderIndex - 1 })
+    }
+
+    colorChange(id) {
+        if (id === 'offert' || id === 'telefon') {
+            var btn = document.getElementById(id);
+            btn.setAttribute("disabled", "disabled");
+            btn.setAttribute("style", "background-color: #0FAF32");
+            btn.innerHTML = "Inväntar offert...";
         }
     }
 
     signupsubmit(event) {
         event.preventDefault();
-        if (this.state.formErrors.email == "" && this.state.formErrors.name == "" && this.state.formErrors.phone == "" && this.state.formErrors.password == "") {
-
+        if (this.state.formErrors.email === "" && this.state.formErrors.name === "" && this.state.formErrors.phone === "" && this.state.formErrors.password === "") {
             const main = this;
             var est = {
                 area: this.props.area,
@@ -120,9 +469,26 @@ class Areaestimate extends Component {
                 slopecost: this.props.roofstylecost,
                 materialcost: this.props.materialcost,
                 labour: costoflabour,
-                address: this.props.address
+                address: this.props.address,
+                power: this.props.power,
+                e_consumption: this.state.e_consumption,
+                battery: this.state.battery,
+                panel: this.state.panel,
+                panelsCount: this.state.panelsCount,
+                solar_installation_cost: installationBeforeTaxNoComm,
+                supervisor_commission: superVisorCommission,
+                digisolar_commission: digisolarComission,
+                solar_installation_With_commission: installationBeforeTax,
+                solar_installation_after_tax: Roofprice,
+                display_cost: displayPrice,
+                solar_incentives: soalrIncentives,
+                battery_cost: batteryCost,
+                battery_cost_after_tax: BatteryCostAfterTax,
+                battery_incentives: comissionOnBatteryIncentives,
+                solar_intallation_after_commission: installationAfterIncentives,
+                battery_after_incentives: batteryAfterIncentive,
+                final_cost: finalCost
             }
-
 
             var payload = {
                 name: this.state.name,
@@ -133,50 +499,43 @@ class Areaestimate extends Component {
                 estdet: est
             }
 
-
             fetch(`users/registeruser`, {
                 method: "post", headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     "Access-Control-Request-Headers": "*",
                     "Access-Control-Request-Method": "*"
                 }, body: 'json=' + JSON.stringify(payload)
+            }).then(function (response) {
+                return response;
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                if (data.status === 400) {
+                    main.setState({
+                        responceerrorsignup: data.message
+                    })
+                } else if (data.status === 200) {
+                    localStorage.setItem('userdata', JSON.stringify(data.data));
+                    localStorage.setItem('token', data.token);
+                    main.setState({
+                        userdata: data.data,
+                        responceerrorsignup: ""
+                    })
+                    main.props.loginmodefun(true);
+                }
             })
-                .then(function (response) {
-                    return response;
-                })
-                .then(function (response) {
-                    return response.json();
-                }).then(function (data) {
-                    if (data.status == 400) {
-                        main.setState({
-                            responceerrorsignup: data.message
-                        })
-                    } else if (data.status == 200) {
-                        localStorage.setItem('userdata', JSON.stringify(data.data));
-                        localStorage.setItem('token', data.token);
-
-                        main.setState({
-                            userdata: data.data,
-                            responceerrorsignup: ""
-                        })
-                        main.props.loginmodefun(true);
-                    }
-                })
         } else {
             alert("Please Fill All Mandatory Fields ");
         }
-        //  this.compleatevalidation();
-        // alert('A name was submitted: ' + this.state.email+'password'+this.state.email);
-
     }
 
     loginsubmit(event) {
+        debugger;
         event.preventDefault();
         const main = this;
         var payload = {
             email: this.state.email,
             phone: this.state.phone,
-            // password: this.state.password,
             password: '123456',
             type: 'USER'
         }
@@ -187,99 +546,109 @@ class Areaestimate extends Component {
                 "Access-Control-Request-Headers": "*",
                 "Access-Control-Request-Method": "*"
             }, body: 'json=' + JSON.stringify(payload)
-        })
-            .then(function (response) {
-                return response;
-            })
-            .then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                if (data.status == 400) {
-                    main.setState({
-                        responceerrorlogin: data.message
-                    })
-                } else if (data.status == 200) {
-                    var userdata;
-
-                    main.setState({
-                        responceerrorlogin: ""
-                    })
-
-                    if (data.data.type == "USER") {
-                        userdata =
-                            {
-                                "type": data.data.type,
-                                "estdet": data.data.estdet,
-                                "updateon": data.data.updateon,
-                                "cratedon": data.data.cratedon,
-                                "email": data.data.email, "phone": data.data.phone, "name": data.data.name, "token": data.token
-                            }
-                        var payload = {
-                            area: main.props.area,
-                            coordinates: main.props.coordinates,
-                            slope: main.props.style,
-                            estimatedamount: Roofprice,
-                            material: main.props.material,
-                            slopecost: main.props.roofstylecost,
-                            materialcost: main.props.materialcost,
-                            labour: costoflabour,
-                            address: main.props.address,
-                            email: data.data.email,
-                            property_type: main.props.property_type,
-                            floors: main.props.floors,
-                            roof_pitch: main.props.roof_pitch
-                        }
-                        fetch('users/estimation', {
-                            method: "post",
-                            crossDomain: true,
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                "Access-Control-Request-Headers": "*",
-                                "Access-Control-Request-Method": "*",
-
-                            }, body: 'json=' + JSON.stringify(payload) + '&token=' + data.token
-                        })
-                            .then(function (response) {
-                                return response;
-                            })
-                            .then(function (response) {
-                                return response.json();
-                            }).then(function (data) {
-
-                                if (data.status == 400) {
-                                    main.setState({
-                                        responceerror: data.message
-                                    })
-                                } else if (data.status == 200) {
-
-                                    main.setState({
-                                        responceerror: ""
-                                    })
-                                }
-                            })
-                    } else if (data.data.type == "CONTRACTOR") {
-                        userdata = {
+        }).then(function (response) {
+            return response;
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            if (data.status === 400) {
+                main.setState({
+                    responceerrorlogin: data.message
+                })
+            } else if (data.status === 200) {
+                var userdata;
+                main.setState({
+                    responceerrorlogin: ""
+                })
+                if (data.data.type === "USER") {
+                    userdata =
+                        {
                             "type": data.data.type,
-                            "organization_number": data.data, organization_number,
-                            "address": data.data.address,
-                            "website": data.data.website,
-                            "businessname": data.data.businessname,
+                            "estdet": data.data.estdet,
                             "updateon": data.data.updateon,
                             "cratedon": data.data.cratedon,
-                            "email": data.data.email, "phone": data.data.phone, "name": data.data.name, "token": data.toke
+                            "email": data.data.email, "phone": data.data.phone, "name": data.data.name, "token": data.token
                         }
-                    }       //         estimation
-                    localStorage.setItem('userdata', JSON.stringify(userdata));
-                    localStorage.setItem('token', data.toke);
-                    main.setState({
-                        userdata: data.data
-                    })
-                    main.props.loginmodefun(true);
-                    //location.href = "/";
-                }
-            })
-    }
+                    var payload = {
+                        area: main.props.area,
+                        coordinates: main.props.coordinates,
+                        slope: main.props.style,
+                        estimatedamount: Roofprice,
+                        material: main.props.material,
+                        slopecost: main.props.roofstylecost,
+                        materialcost: main.props.materialcost,
+                        labour: costoflabour,
+                        address: main.props.address,
+                        email: data.data.email,
+                        property_type: main.props.property_type,
+                        floors: main.props.floors,
+                        roof_pitch: main.props.roof_pitch,
+                        power: main.props.power,
+                        e_consumption: main.state.e_consumption,
+                        battery: main.props.battery,
+                        panel: main.props.panel,
+                        panelsCount: main.props.panelsCount,
+                        solar_installation_cost: installationBeforeTaxNoComm,
+                        supervisor_commission: superVisorCommission,
+                        digisolar_commission: digisolarComission,
+                        solar_installation_With_commission: installationBeforeTax,
+                        solar_installation_after_tax: Roofprice,
+                        display_cost: displayPrice,
+                        solar_incentives: soalrIncentives,
+                        battery_cost: batteryCost,
+                        battery_cost_after_tax: BatteryCostAfterTax,
+                        battery_incentives: comissionOnBatteryIncentives,
+                        solar_intallation_after_commission: installationAfterIncentives,
+                        battery_after_incentives: batteryAfterIncentive,
+                        final_cost: finalCost
+                    }
+                    fetch('users/estimation', {
+                        method: "post",
+                        crossDomain: true,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            "Access-Control-Request-Headers": "*",
+                            "Access-Control-Request-Method": "*",
 
+                        }, body: 'json=' + JSON.stringify(payload) + '&token=' + data.token
+                    })
+                        .then(function (response) {
+                            return response;
+                        })
+                        .then(function (response) {
+                            return response.json();
+                        }).then(function (data) {
+                            if (data.status === 400) {
+                                main.setState({
+                                    responceerror: data.message
+                                })
+                            } else if (data.status === 200) {
+                                main.setState({
+                                    responceerror: ""
+                                })
+                            }
+                        })
+                } else if (data.data.type === "CONTRACTOR") {
+                    userdata = {
+                        "type": data.data.type,
+                        "organization_number": data.data, organization_number,
+                        "address": data.data.address,
+                        "website": data.data.website,
+                        "businessname": data.data.businessname,
+                        "updateon": data.data.updateon,
+                        "cratedon": data.data.cratedon,
+                        "email": data.data.email, "phone": data.data.phone, "name": data.data.name, "token": data.toke
+                    }
+                }
+                localStorage.setItem('userdata', JSON.stringify(userdata));
+                localStorage.setItem('token', data.toke);
+                main.setState({
+                    userdata: data.data
+                })
+                main.props.loginmodefun(true);
+            }
+        })
+    }
 
     validateField(fieldName, value) {
         let fieldValidationErrors = this.state.formErrors;
@@ -290,7 +659,6 @@ class Areaestimate extends Component {
 
         switch (fieldName) {
             case 'email':
-                //emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
                 emailValid = value.length >= 6;
                 fieldValidationErrors.email = emailValid ? '' : ' is invalid';
                 this.setState({ formErrors: fieldValidationErrors, emailValid: emailValid, email: value });
@@ -301,7 +669,7 @@ class Areaestimate extends Component {
                 this.setState({ formErrors: fieldValidationErrors, passwordValid: passwordValid, password: value });
                 break;
             case 'phone':
-                phonevalid = value.length == 10;
+                phonevalid = value.length === 10;
                 fieldValidationErrors.phone = phonevalid ? '' : 'phone number  is too short';
                 this.setState({ formErrors: fieldValidationErrors, phonevalid: phonevalid, phone: value });
                 break;
@@ -314,6 +682,7 @@ class Areaestimate extends Component {
                 break;
         }
     }
+
     haveaccountfunction() {
         this.setState({
             haveaccount: !this.state.haveaccount
@@ -333,10 +702,29 @@ class Areaestimate extends Component {
             materialcost: this.props.materialcost,
             labour: costoflabour,
             address: this.props.address,
-            email: email
-
+            email: email,
+            power: this.props.power,
+            e_consumption: this.state.e_consumption,
+            floors: this.props.floors,
+            roof_pitch: this.props.roof_pitch,
+            property_type: this.props.property_type,
+            battery: this.state.battery,
+            panel: this.state.panel,
+            panelsCount: this.state.panelsCount,
+            solar_installation_cost: installationBeforeTaxNoComm,
+            supervisor_commission: superVisorCommission,
+            digisolar_commission: digisolarComission,
+            solar_installation_With_commission: installationBeforeTax,
+            solar_installation_after_tax: Roofprice,
+            display_cost: displayPrice,
+            solar_incentives: soalrIncentives,
+            battery_cost: batteryCost,
+            battery_cost_after_tax: BatteryCostAfterTax,
+            battery_incentives: comissionOnBatteryIncentives,
+            solar_intallation_after_commission: installationAfterIncentives,
+            battery_after_incentives: batteryAfterIncentive,
+            final_cost: finalCost
         }
-
 
         fetch('users/estimation', {
             method: "post",
@@ -347,456 +735,273 @@ class Areaestimate extends Component {
                 "Access-Control-Request-Method": "*",
 
             }, body: 'json=' + JSON.stringify(payload) + '&token=' + token
+        }).then(function (response) {
+            return response;
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            localStorage.setItem('userdata', JSON.stringify(data));
         })
-            .then(function (response) {
-                return response;
-            })
-            .then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                localStorage.setItem('userdata', JSON.stringify(data));
-
-                /* if (data.status == 400) {
-                     main.setState({
-                         userdata: data.message
-                     })
-                 } else if (data.status == 200) {
-                    alert("dtaasaved");
-                  
-                 }
- */
-            })
     }
 
-    date() {
-        this.setState({ date })
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.closeUpdatePanelmodal && !nextState.modalIsOpen) {
+            setTimeout(this.initialValues(nextState.panel, nextState.battery, nextState.panelsCount), 2000);
+            this.closeModal();
+        }
     }
+
     render() {
-        if (this.props.logedin == true) {
-
-            this.SendEstimation.bind(this);
-            setTimeout(() => {
-                this.setState({
-                    text: 'Letar leverantörer i ditt område'
-                })
-            }, 2000);
-            setTimeout(() => {
-                this.setState({
-                    loaded: true
-                })
-            }, 5000);
-            //  console.log(localStorage.getItem("userdata"));
+        if (this.props.logedin === true && this.props.componentindex === "7") {
             return (
-                <div>
+                <div className="container">
                     {!this.state.loaded ? (
-                        <div className="container-fluid">
-                            <Loader loaded={this.state.loaded} options={options} className="spinner" />
+                        <div className="container-fluid p-b-5">
+                            <video className="loader" id="background-video" loop autoPlay muted>
+                                <source src="./img/animation2.mp4" type="video/mp4" />
+                            </video>
                             <div className="loaderText"><p>{this.state.text}</p></div>
                         </div>
-                    ) : (<div>
-                        <div className="container" style={{ marginTop: 20 }} >
-
-                            <div className="col-sm-8" style={{ paddingTop: 0 }}><div id="estimateright">
-                                <h2 ><b>Ditt prisförslag är färdigt</b></h2>
-                                <h3 id="eststep2"><strong>Adress </strong>: {this.props.address}</h3>
-                                <h3 id="eststep2"><strong>Fastighetstyp: <b>{this.props.property_type}</b></strong></h3>
-                                <h3 id="eststep2"><strong>Taklutning: <b>{this.props.floors}</b></strong></h3>
-                                <h3 id="eststep2"><b>Att byta ditt tak till ett <b>{this.props.material}</b> skulle kosta uppskattningsvis:
-</b></h3>
-                               
-
-
-                                <Solarpanel data={this.props.material} />
-
-
-
-
-
-                                {/*}
-
-            <div>Din kontaktperson kommer att kontakta dig för att berätta mer om fördelarna med att ta hjälp av Digitak för upphandlandet av din takomläggning</div>
-
-            <div class="test4">
-                <Contact />
-            </div>
-            <h2 data-toggle="modal" className="include_estimatn" data-target="#myModal" style={matstyle.h2}>Vad är inkluderat i kostnadsförslaget?</h2>
-            <div>
-                <p className="view_estimtn" style={matstyle.formmargin} > <Link to="/Profile">Mina takberäkningar</Link></p></div>
-                <div class="test4">
-                    <Contact/>
-                </div>*/}
-                                {/*}
-            <div id="myModal" className="modal fade" role="dialog">
-                <div className="modal-dialog">
-
-
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <button type="button" className="close" data-dismiss="modal">&times;</button>
-                            <h4 className="modal-title cstm_mdtitle">Roof estimaton Includes </h4>
-                        </div>
-                        <div className="modal-body cstm_mdbody">
-
-                            <h2>Vad är inkluderat i ditt kostnadsförslag</h2>
-                            <p><b>Vad baseras kostnadsförslaget på?</b></p>
-                            <p>Ditt kostnadsförslag är baserat på dom uppgifter du fyllde i genom vår takberäknare och baseras på följande faktorer:</p>
-                            <p><ul><li> Takets storlek 📐</li><li>Takets design ✍️</li>
-                            <li>Takets material 🏠</li></ul></p>
-                            <p><b>Vad ingår?</b></p>
-                            <p><ul>
-                                <li>Etablering och byggnadsställning 🚧</li>
-                                <li>Material som krävs för din takomläggning 🔨</li>
-                                <li>Allt arbete som krävs för etablering, rivning, omläggning och grovstädning. 👷</li>
-                                <li>Container 📦</li>
-                                <li>Transporter och tippavgifter 🚛</li>
-
-                            </ul></p>
-                            <p><b>Vad händer nu?</b></p>
-                            <p>Ditt kostnadsförslag är en estimering baserat på de uppgifter vi har om ditt hushåll just nu. Vi kommer att kontakta dig för att ställa uppföljande frågor om ditt tak och du kommer då att erbjudas en kostnadsfri takbesiktning. Efter att vi har gjort en fysisk takgenomgång kommer vi att ge dig en offert på din fastighet som du kan välja att gå vidare med eller avfärda. Inga krav finns på motprestation från köparens sida.</p>
-
-
-
-
-
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-
+                    ) : this.state.PanelModalIsOpen ?
+                            <PanelTypes battery={this.state.battery}
+                                panel={this.state.panel}
+                                packetsCount={this.state.panelsCount}
+                                packetName={this.state.packetName}
+                                update={this.update.bind(this)}
+                                location={this.props.roofaddress}
+                                e_consumption={this.state.e_consumption}
+                                closeModal={this.closeModal.bind(this)}
+                                closeUpdatePanelmodal={this.state.closeUpdatePanelmodal}
+                                PanelModalIsOpen={this.state.PanelModalIsOpen}
+                                roof_pitch={this.props.roof_pitch}
+                                surfaceDirection={this.props.surfaceDirection}
+                                annualProduction={this.state.annualProduction}
+                                area={this.props.area} /> : (
+                                <div>
+                                    <div className="" id="estimateright" style={{ marginTop: 20 }} >
+                                        <div className="col-sm-12 col-md-12 panding_no">
+                                            <div className="col-sm-6 col-md-6">
+                                                <div className="area-estimation-card-heading font-quicksand ">Ditt tak</div>
+                                                <div className="col-md-12 col-sm-12 area-estimation-cards">
+                                                    <h3 id="cap-address">{this.props.address}</h3>
+                                                    <div className="col-sm-12 panding_no">
+                                                        <div className="col-sm-12 col-md-6 panding_no">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Fastighetstyp: </strong><br />
+                                                                <b className="f15">{this.props.property_type}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12 col-md-6 panding_no">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Årlig elförbrukning : </strong><br />
+                                                                <b className="f15">{this.state.e_consumption}</b></h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-sm-12 col-md-12 panding_no">
+                                                        <div className="col-sm-12 col-md-6  panding_no">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Taklutning : </strong><br />
+                                                                <b className="f15">{this.props.roof_pitch} ° </b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12 col-md-6 panding_no">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Huvudsäkring : </strong><br />
+                                                                <b className="f15">{this.props.power}</b></h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-sm-12  col-md-12 panding_no">
+                                                        <div className="col-sm-12 col-md-6 panding_no">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Takmaterial : </strong><br />
+                                                                <b className="f15">{this.props.material}</b></h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6 col-md-6">
+                                                <div className="area-estimation-card-heading font-quicksand ">Din Produkt</div>
+                                                <div className="col-md-12 col-sm-12 estimation-panel-card">
+                                                    <div className="col-sm-12 col-md-6 card-content-bottom">
+                                                        <div className="col-sm-12">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">SOLPANEL: </strong><br />
+                                                                <b className="f15">{this.state.panel}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12 col-md-12">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">ANTal PANEL:</strong><br />
+                                                                <b className="f15">{this.state.panelsCount}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12  col-md-12 ">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">BATTERI </strong><br />
+                                                                <b className="f15">{this.state.battery}</b></h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-6 col-sm-12 align-text-center">
+                                                        <button className="panel-card-button" onClick={this.modalPanelpopup}>Byt Produkt</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-12 col-md-12 panding_no">
+                                            <div className="col-sm-6 col-md-6">
+                                                <div className="area-estimation-card-heading font-quicksand ">Elproduktion</div>
+                                                <div className="col-md-12 col-sm-12 estimation-panel-card elproduction">
+                                                    <div className="col-sm-12 panding_no ">
+                                                        <div className="col-sm-12 col-md-6 panding_no">
+                                                            <h3 id="eststep2" className="align-text-center">
+                                                                <b className="f15">installerade effekt </b><br />
+                                                                <div className="per-panel">{totalInstalledPowerInkw} kWh</div></h3>
+                                                        </div>
+                                                        <div className="col-sm-12 col-md-6 panding_no">
+                                                            <h3 id="eststep2" className="align-text-center">
+                                                                <b className="f15">Årsproduktion </b><br />
+                                                                <div className="per-panel">{this.state.annualProduction} kWh</div></h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6 col-md-6">
+                                                <div className="area-estimation-card-heading font-quicksand">Pris hgfdsa</div>
+                                                <div className="col-md-12 panding_no">
+                                                    <div className="table-bg">
+                                                        <table className="table amount-total">
+                                                            <tbody>
+                                                                <tr className="font-weignt-700">
+                                                                    <td className="table-cat padding-left-none padding-right-none w48">
+                                                                        Solpanelsanlägging  och installation
+                                                                </td>
+                                                                    <td className="table-price-width">
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(displayPrice.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        <span className="f21"> SEK</span>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr className="font-weignt-700">
+                                                                    <td className="table-cat padding-left-none w48">Batteri</td>
+                                                                    <td className="table-price-width">
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(BatteryCostAfterTax.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        <span className="f21"> SEK</span>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr className=" font-weignt-700">
+                                                                    <td className="table-cat padding-left-none w48">Solcellsstöd</td>
+                                                                    <td className="table-price-width">
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={-parseFloat(soalrIncentives.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        <span className="f21"> SEK</span>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr className="total-border font-weignt-700">
+                                                                    <td className="table-cat padding-left-none w48">Batteristöd</td>
+                                                                    <td className="table-price-width">
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={batteryIncentives > 0 ? -parseFloat(batteryIncentives.toFixed(0)) : batteryIncentives} displayType={'text'} thousandSeparator={' '} />
+                                                                        <span className="f21"> SEK</span>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr className="font-weignt-700">
+                                                                    <td className="table-cat padding-left-none w48">Total(inkl moms)</td>
+                                                                    <td className="table-price-width">
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(finalCost.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        <span className="f21"> SEK</span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-12 col-sm-12 align-text-center align-appointment">
+                                            <button id="appointment-button" className="btn btn-info" onClick={this.modalpopup}>Boka Besiktning</button>
+                                        </div>
+                                        {this.state.popup ? (
+                                            <div>
+                                                <Modal
+                                                    isOpen={this.state.modalIsOpen}
+                                                    onAfterOpen={this.afterOpenModal}
+                                                    onRequestClose={this.closeModal}
+                                                    style={customStyles}
+                                                    contentLabel="Example Modal">
+                                                    <div className="col-md-12 panding_no">
+                                                        <div className="boka-heading">Boka Besiktning</div>
+                                                        <div className="f-right">
+                                                            <button className="close-button " onClick={this.closeModal}>X</button>
+                                                        </div>
+                                                    </div>
+                                                    <TimeBooking previous={this.previous.bind(this)}
+                                                        closeModal={this.closeModal.bind(this)}
+                                                        calenderIndex={this.state.calenderIndex}
+                                                        nextPage={this.nextPage.bind(this)} />
+                                                </Modal>
+                                            </div>
+                                        ) : (null)}
+                                        <div className="col-sm-12 col-md-12 panding_no">
+                                            <div className="area-estimation-card-heading font-quicksand">Solekonomi</div>
+                                            <ESaving roof_pitch={this.props.roof_pitch} packetName={this.props.packetName} roofarea={this.props.area} location={this.props.roofaddress} direction={this.props.surfaceDirection} noOfPanels={this.state.panelsCount} capacity={capacity} estimatedAmount={displayPrice} />
+                                        </div>
+                                        <div className="col-sm-12 col-md-12 panding_no">
+                                            <div className="col-sm-12 panding_no align-text-center  m-50">
+                                                <h2 style={{ color: '#064f70', fontWeight: 'bold', fontFamily: 'quicksand' }}>Våra installationer innehåller alltid</h2>
+                                            </div>
+                                            <div className="col-sm-12">
+                                                <div className=" col-sm-6 separet_width">
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='Check-Mark-2' /><b>Allt material ink solpaneler </b> </h4>
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='Check-Mark' /><b>Komplett installation inkl elektriker</b></h4>
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='CheckMark' /><b>Transport till mottagaradress </b> </h4>
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='CheckedMark' /><b>Ställningsmontage &amp; taksäkerhet </b> </h4>
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='CheckerMark' /><b>Projektledning och dimensionering </b> </h4>
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='Check' /><b>För och färdiganmälan till nätägare </b> </h4>
+                                                    <h4><img src="./img/Check-Mark-2.png" alt='CheckM' /><b>Uppkoppling av växelriktare för övervakning av produktion</b> </h4>
+                                                </div>
+                                                <div className="col-sm-6" style={{ textAlign: 'center', alignItems: 'center' }}>
+                                                    <img className="img-responsive" alt='image' src="./img/solar_estimation.png" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>)
+                    }
                 </div>
-            </div>
-
-            */}
-                            </div></div>
-                            <div className="col-sm-4" ><div id="estimateleft" className="pm_details">
-                                <img src="./img/logo.png" />
-                                <p className="pro_mng">Din kontaktperson</p>
-                                <img src="./img/pro_mng.png" className="img-circle" />
-                                <p>Gustav Dafnäs</p>
-                                <p>+46763949564</p>
-                                <p>info@digitak.se</p>
-
-                            </div></div>
-
-                            <div className="row"><div className="col-sm-8"> <MiddleContent /></div></div>
-
-                            <Gridview
-                                area={this.props.area}
-                                coordinates={JSON.stringify(this.props.coordinates)}
-                                slope={this.props.style}
-                                estimatedamount={Roofprice}
-                                material={this.props.material}
-                                slopecost={this.props.roofstylecost}
-                                materialcost={this.props.materialcost}
-                                labour={costoflabour}
-                                address={this.props.address}
-                                email={JSON.parse(localStorage.getItem("userdata")).email}
-
-                            />
-                        </div>
-                    </div>)
-                    }</div>
             )
         } else {
             return (
-                <div>
+                <div> 
                     <div className="container-fluid bg-white">
                         <div className="shdow_wt">
                             <div className="row ">
                                 <div className="col-sm-12 text-center login_txt">
-                                    <img src="./img/logo.png" />
+                                    <img src="./img/disolar_logo_black.png" alt='disolar_logo_black' />
                                     <h3>Din prisuppskattning är färdig!</h3>
                                     <h4>Vi har nu genererat din prisuppskattning baserat på följande uppgifter:</h4>
-
                                 </div>
                                 <div className="col-sm-12 text-center registrn_add  login_txt">
                                     <p><span className="addres_txt">Adress :</span> {this.props.address}</p>
                                     <p><span className="addres_txt">Fastighetstyp :</span> {this.props.property_type}</p>
-                                    <p><span className="addres_txt">Taklutning :</span> {this.props.floors}</p>
-                                    <p><span className="addres_txt">Storlek tak :</span>{parseFloat(area.toFixed(1))} kvadratmeter</p>
-                                    <p><span className="addres_txt">Takdesign :</span> {this.props.style} </p>
-                                    <p><span className="addres_txt">Önskat material :</span>  {this.props.material}</p>
+                                    <p><span className="addres_txt">Taklutning :</span> {this.props.roof_pitch} °</p>
+                                    <p><span className="addres_txt">Takmaterial :</span>  {this.props.material}</p>
+                                    <p><span className="addres_txt">Årlig elförbrukning :</span> {this.state.e_consumption}</p>
+                                    <p><span className="addres_txt">Huvudsäkring :</span> {this.props.power}</p>
                                     <h4>Vänligen skriv in din e-postadress för att få tillgång till din prisuppskattning</h4>
                                 </div>
-
                             </div>
-
                             <div className="row form_bottom1">
-
                                 <div className="col-sm-12">
-
                                     <div className="form_top2"><div >
-                                        < GetDetails haveaccountfunction={this.haveaccountfunction.bind(this)}
+                                        <GetDetails haveaccountfunction={this.haveaccountfunction.bind(this)}
                                             haveaccount={this.state.haveaccount}
                                             loginsubmit={this.loginsubmit.bind(this)}
                                             signupnsubmit={this.signupsubmit.bind(this)}
-
                                             responceerror={this.state.responceerror}
                                             responceerrorlogin={this.state.responceerrorlogin}
                                             responceerrorsignup={this.state.responceerrorsignup}
-
-
                                             validateField={this.validateField.bind(this)}
                                         /></div></div>
                                 </div>
-
                             </div>
                         </div>
-
-
                     </div>
                     <div className="container-fluid">
                         <div className="row">
                             <div className="btmimg">
-                                <img src="./img/bootm-im.jpg" className="img-responsive" />
+                                <img src="./img/bootm-im.jpg" className="img-responsive" alt='bootm-im.jpg' />
                             </div>
                         </div>
                     </div>
                 </div>
             )
-
         }
     }
 }
-
-
-class Solarpanel extends Component {
-    constructor(props) {
-        super(props)
-
-    }
-    render() {
-        if (this.props.data == "Solpaneler") {
-            return (<div>
-
-                <h4 >{parseFloat(area.toFixed(1))} (m²) <span>Exklusive ROT avdrag</span></h4>
-                <div className="separet_width">
-                    <h4><img src="./img/check-mark.png" /><b>Solcellspaneler</b> </h4>
-                    <h4><img src="./img/check-mark.png" /><b>Installation </b></h4>
-                </div>
-                <div>Din kontaktperson kommer att kontakta dig för att berätta mer om fördelarna med att ta hjälp av Digitak för upphandlandet av din takomläggning</div>
-
-            </div>)
-
-        } else {
-            return (<div>
-
-                <h4 className="price_font"><b> <CurrencyFormat style={{ fontSize: 30 }} value={parseFloat(Roofprice.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
-                    <span className="price_separator" style={{ fontSize: 30 }}> SEK</span></b></h4>
-                <h4 >{parseFloat(area.toFixed(1))} (m²) <span>Exklusive ROT avdrag</span></h4>
-                <div className="separet_width">
-                    <h4><img src="./img/check-mark.png" /><b>Arbete</b> </h4>
-                    <h4><img src="./img/check-mark.png" /><b>Material </b></h4>
-                    <h4><img src="./img/check-mark.png" /><b>Transport & Tippavgifter</b> </h4>
-                </div>
-                <div>Din kontaktperson kommer att kontakta dig för att berätta mer om fördelarna med att ta hjälp av Digitak för upphandlandet av din takomläggning</div>
-            </div>)
-
-        }
-    }
-}
-
-class Contact extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            date: new Date(),
-            time: "",
-            startDate: ""
-        }
-
-    }
-
-    contactdate(event) {
-        alert(this.refs.googleInput.value);
-        this.setState({
-            date: event.target.name
-        })
-    }
-
-    contacttime(event) {
-        this.setState({
-            time: event.target.name
-        })
-    }
-
-    datetimeservice(valdate, valtime, valemail) {
-        var valemail = JSON.parse(localStorage.getItem("userdata")).email;
-        var token = localStorage.getItem("token");
-        var payload = {
-            valdate: valdate,
-            valtime: valtime,
-            email: valemail
-
-        }
-
-        fetch('users/connecttimes', {
-            method: "post",
-            crossDomain: true,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                "Access-Control-Request-Headers": "*",
-                "Access-Control-Request-Method": "*",
-
-            }, body: 'json=' + JSON.stringify(payload) + '&token=' + token
-        })
-            .then(function (response) {
-                return response;
-            })
-            .then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                if (data.status == 400) {
-                    main.setState({
-                        responceerror: data.message
-                    })
-                } else if (data.status == 200) {
-                    alert(data.message);
-                }
-            })
-    }
-
-    get_date(event) {
-        this.setState({
-            startDate: event.target.value
-        })
-    }
-
-    get_time(event) {
-        this.setState({
-            startDate: event.target.value
-        })
-    }
-
-    contactfunc(event) {
-        event.preventDefault();
-        this.datetimeservice(this.state.startDate, this.state.time);
-        //console.log(this.refs.dateinput.value + "---" + this.refs.timeInput.value);
-        // console.log((new Date(this.state.date)).toString());
-    }
-
-
-    render() {
-        return (<div id="contactus" className="row" >
-            <div><h3 className="info_contact">Om du vill kan du själv välja en tid som passar dig <br />att bli kontaktad
-</h3></div>
-            <br />
-            <form onSubmit={this.contactfunc.bind(this)}>
-                <div className="col-sm-12 text-center">
-
-                    {/* <input type="text" id="datepicker" ref="dateinput" className="form-control" required />
-<input type="date"  ref="dateinput" className="form-control" required />
-                </div>
-
-                <div className="col-sm-3" ><input type="time" className="form-control" ref="googleInput" title="Formate 12:00:Am/Pm" id="" required /></div>
-                <div className="col-sm-2" ><button className="btn btn-primary" type="submit">Reach Us</button>
-*/}
-                    <span className="valid_dag">Välj dag :</span> <input type="date" ref="dateinput" required="" id="contact-input" onChange={this.get_date.bind(this)} required />
-                    <span className="valid_dag">Välj tid :</span>  <select ref="timeinput" className="time-filed" onChange={this.get_time.bind(this)} required>
-                        <option value="Tid">Tid</option>
-                        <option value="01:00:00">1:00</option>
-                        <option value="02:00:00">2:00</option>
-                        <option value="03:00:00">3:00</option>
-                        <option value="04:00:00">4:00</option>
-                        <option value="05:00:00">5:00</option>
-                        <option value="06:00:00">6:00</option>
-                        <option value="07:00:00">7:00</option>
-                        <option value="08:00:00">8:00</option>
-                        <option value="09:00:00">9:00</option>
-                        <option value="10:00:00">10:0</option>
-                        <option value="11:00:00">11:00</option>
-                        <option value="12:00:00">12:00</option>
-                        <option value="13:00:00">13:00</option>
-                        <option value="14:00:00">14:00</option>
-                        <option value="15:00:00">15:00</option>
-                        <option value="16:00:00">16:00</option>
-                        <option value="17:00:00">17:00</option>
-                        <option value="18:00:00">18:00</option>
-                        <option value="19:00:00">19:00</option>
-                        <option value="20:00:00">20:00</option>
-                        <option value="21:00:00">21:00</option>
-                        <option value="22:00:00">22:00</option>
-                        <option value="23:00:00">23:00</option>
-                        <option value="24:00:00">24:00</option>
-                    </select>
-                    <button type="submit" id="contact-input-button" >Boka tid</button></div>
-
-
-            </form>
-
-        </div>)
-    }
-}
-/*
-class GetDetails extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    handleChange(event) {
-
-
-        this.props.validateField(event.target.name, event.target.value)
-    }
-
-    render() {
-        if (this.props.haveaccount) {
-            return (
-
-                <form onSubmit={this.props.signupnsubmit} id="signup" style={matstyle.formmargin}>
-                    <span className="alert alert-danger" hidden={(this.props.responceerrorsignup == "")}>
-                        {this.props.responceerrorsignup}
-                    </span>
-                    <input type="text" name="name" className="form-control input-namebg" placeholder="Name*" onBlur={this.handleChange.bind(this)} required />
-
-                    <span id="error">{this.props.nameErrors}
-                    </span>
-
-                    <input type="text" name="phone" className="form-control input-phonebg" placeholder="Phone*" onBlur={this.handleChange.bind(this)} required />
-                    <span id="error">{this.props.PhoneErrors}
-                    </span>
-                    <input type="email" name="email" className="form-control input-bg" placeholder="Email*" onBlur={this.handleChange.bind(this)} required />
-
-                    <span id="error">{this.props.EmailErrors}
-                    </span>
-                    <input type="password" name="password" className="form-control input-bg1" placeholder="Password*" onBlur={this.handleChange.bind(this)} required />
-                    <span id="error">{this.props.PasswordErrors}
-                    </span>
-
-
-
-                    <div className="form-group" style={margin}>  <input type="submit" id="buttonnew" className="btn btn-info" value="Estimate" />
-                        <button type="btn" className="signup-btn" onClick={this.props.haveaccountfunction.bind(this)}   > Sign in here ?</button></div>
-                </form>)
-
-        } else {
-
-            return (
-                <form onSubmit={this.props.loginsubmit.bind(this)} id="login" style={matstyle.formmargin}>
-
-                    <div className="alert alert-danger" hidden={(this.props.responceerrorlogin == "")} >
-                        {this.props.responceerrorlogin}
-                    </div>
-                    <input type="email" name="email" placeholder="Email*" className="form-control input-bg" onBlur={this.handleChange.bind(this)} required />
-
-                    <span id="error">{this.props.EmailErrors}
-                    </span>
-                    <input type="password" placeholder="Password*" className="form-control input-bg1" name="password" onBlur={this.handleChange.bind(this)} required />
-                    <span id="error">{this.props.PasswordErrors}
-                    </span>
-                    {<p className="text-right">  <a href="/Forgotpassword"><u>Forgot Password ?</u> </a></p>}<br />
-                    <div> <input type="submit" className='btn' id="buttonnew" value="Login" /> <button className="forgot_log signup-btn" onClick={this.props.haveaccountfunction.bind(this)}  >(or) signup here ? </button></div>
-
-                </form>)
-        }
-    }
-}
-*/
-
-
-
-// latest code old one commented 
 
 class GetDetails extends Component {
     constructor(props) {
@@ -806,209 +1011,21 @@ class GetDetails extends Component {
     handleChange(event) {
         this.props.validateField(event.target.name, event.target.value)
     }
+
     render() {
         return (<form onSubmit={this.props.loginsubmit.bind(this)} id="login" style={matstyle.formmargin}>
-
-            <div className="alert alert-danger" hidden={(this.props.responceerrorlogin == "")} >
+            <div className="alert alert-danger" hidden={(this.props.responceerrorlogin === "")} >
                 {this.props.responceerrorlogin}
             </div>
             <input type="email" name="email" placeholder="E-postadress*" className="form-control input-bg" onBlur={this.handleChange.bind(this)} required />
-
             <span id="error">{this.props.EmailErrors}
             </span>
             <input type="text" name="phone" className="form-control input-phonebg" placeholder="Telefonnummer*" onBlur={this.handleChange.bind(this)} required />
             <span id="error">{this.props.PhoneErrors}
             </span>
-            {/*} <input type="password" placeholder="Password*" className="form-control input-bg1" name="password" onBlur={this.handleChange.bind(this)} required />
-        <span id="error">{this.props.PasswordErrors}
-    </span> 
-        {<p className="text-right">  <a href="/Forgotpassword"><u>Forgot Password ?</u> </a></p>}*/}<br />
+            <br />
             <div> <input type="submit" className='form-control btn-primary' value="Vidare" /></div>
-
         </form>)
-    }
-}
-
-class MiddleContent extends Component {
-    render() {
-        return (<div className="middleContent">
-            <h4><b>Begär kostnadsfri offert från våra anslutna takläggare</b></h4>
-            <p>Om du vill kan vi hjälpa dig att samla in mer detaljerade offerter från våra anslutna takläggare. Genom att klicka “Begär offert” förbinder du dig inte att gå vidare med en eventuell affär. Dina kontaktuppgifter kommer dock skickas till de bolag du önskar offert av. Bolagen kommer därefter att höra av sig till dig och för att boka tid för en offertbesiktning. Vanligtvis är besiktningen inbokad och klar efter två arbetsdagar.
-</p>
-
-        </div>)
-    }
-}
-
-class Gridview extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-
-        }
-    }
-
-    Send_details_roofer(id) {
-        //  alert(id);
-        this.SendRoofdetailsRoofer(id);
-
-        // if(id=='ROOF001')
-        // {
-        //     var btn=document.getElementById("ROOF001");
-        //     btn.setAttribute("disabled", "disabled");
-        //     btn.setAttribute("style", "background-color: #ccc;");
-        //     btn.innerHTML="Invantär offert...";
-
-        // }else if(id=='ROOF002'){
-
-        //     var btn=document.getElementById("ROOF002");
-        //     btn.setAttribute("disabled", "disabled");
-        //     btn.setAttribute("style", "background-color: #ccc;");
-        //     btn.innerHTML="Invantär offert...";
-
-        // }else if(id=='ROOF003'){
-        //     var btn=document.getElementById("ROOF003");
-        //     btn.setAttribute("disabled", "disabled");
-        //     btn.setAttribute("style", "background-color: #ccc;");
-        //     btn.innerHTML="Invantär offert...";
-
-        // }else if(id=='ROOF004'){
-        //     //alert(id);
-        //     //ReactDOM.refs.ROOF004.value = 'Disabled';
-        //   var btn=document.getElementById("ROOF004");
-        //   btn.setAttribute("disabled", "disabled");
-        //   btn.setAttribute("style", "background-color: #ccc;");
-        //   btn.innerHTML="Invantär offert...";
-
-        // }
-        // console.log(res)
-    }
-    SendRoofdetailsRoofer(id) {
-        var valemail = JSON.parse(localStorage.getItem("userdata")).email;
-        var phone = JSON.parse(localStorage.getItem("userdata")).phone
-        var token = localStorage.getItem("token");
-
-        var estimation = {
-            phone: phone,
-            email: valemail,
-            name: JSON.parse(localStorage.getItem("userdata")).name,
-            area: this.props.area,
-            coordinates: this.props.coordinates,
-            material: this.props.material,
-            slope: this.props.slope,
-            estimatedamount: this.props.estimatedamount,
-            slopecost: this.props.slopecost,
-            materialcost: this.props.materialcost,
-            labour: this.props.materialcost,
-            address: this.props.address,
-            rooferid: id
-            // created_date:{type:Date ,default:Date.now }
-        }
-
-        var res = fetch('users/roofers_data', {
-            method: "post",
-            crossDomain: true,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                "Access-Control-Request-Headers": "*",
-                "Access-Control-Request-Method": "*",
-
-            }, body: 'json=' + JSON.stringify(estimation) + '&token=' + token
-        })
-            .then(function (response) {
-                return response;
-            })
-            .then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                if (data.status == 400) {
-                    main.setState({
-                        responceerror: data.message
-                    })
-                    return data;
-                } else if (data.status == 200) {
-                    var btn = document.getElementById(id);
-                    btn.setAttribute("disabled", "disabled");
-                    btn.setAttribute("style", "background-color: #ccc;");
-                    btn.innerHTML = "Inväntar offert...";
-                    return data
-                    //   ReactDOM.refs.id.value = 'Disabled';
-
-                    //ReactDOM.findDOMNode()
-                    // alert(data.message);
-                }
-            })
-    }
-
-
-    render() {
-        return (<div >
-            <div className="row">
-                <div className="col-sm-2">
-                    <img src="./img/gota.png" className="img-responsive tak-image" />
-                </div>
-                <div className="col-sm-2 header">
-                    <p><b>Göta Tak AB</b></p>
-                </div>
-                <div className="col-sm-5">
-                    <p> <img src="./img/check-mark.png" className="tick" />Professionella takläggare sedan 2007</p>
-                    <p> <img src="./img/check-mark.png" className="tick" /> Familjeföretag i andra generationen med specialisering på tak</p>
-                    <p> <img src="./img/check-mark.png" className="tick" /> Långa garantier på material och arbete</p>
-                </div>
-                <div className="col-sm-3">
-                    <button className="btn btn-primary tak-btn" id="ROOF001" ref="ROOF001" onClick={this.Send_details_roofer.bind(this, 'ROOF001')}>Begär offert</button>
-                </div></div>
-            <div>
-                <hr />
-            </div>
-            <div className="row">
-                <div className="col-sm-2">
-                    <img src="./img/laggarna.png" className="img-responsive tak-image" />
-                </div>
-                <div className="col-sm-2 header">
-                    <p><b>JF Takläggarna AB</b></p>
-                </div>
-                <div className="col-sm-5">
-                    <p> <img src="./img/check-mark.png" className="tick" />Professionella takläggare sedan 2011</p>
-                    <p> <img src="./img/check-mark.png" className="tick" /> 20 års garanti på material 10 års garanti på arbete</p>
-                    <p> <img src="./img/check-mark.png" className="tick" />Stor erfarenhet av att jobba med företag och BRF</p>
-                </div>
-                <div className="col-sm-3">
-                    <button className="btn btn-primary tak-btn" id="ROOF002" ref="ROOF002" onClick={this.Send_details_roofer.bind(this, 'ROOF002')} >Begär offert</button>
-                </div></div>
-            <hr />
-            <div className="row">
-                <div className="col-sm-2">
-                    <img src="./img/northpower.jpg" className="img-responsive tak-image" />
-                </div>
-                <div className="col-sm-2 header">
-                    <p><b>Northpower Takentrepenader AB</b></p>
-                </div>
-                <div className="col-sm-5">
-                    <p> <img src="./img/check-mark.png" className="tick" />Lång erfarenhet av papptak på allt från villor till industrilokaler</p>
-                    <p> <img src="./img/check-mark.png" className="tick" />Marknadens längsta garantier</p>
-                </div>
-                <div className="col-sm-3">
-                    <button className="btn btn-primary tak-btn" id="ROOF003" ref="ROOF003" onClick={this.Send_details_roofer.bind(this, 'ROOF003')} >Begär offert</button>
-                </div></div>
-            <hr />
-            <div className="row">
-                <div className="col-sm-2">
-                    <img src="./img/dandre.png" className="img-responsive tak-image" />
-                </div>
-                <div className="col-sm-2 header">
-                    <p><b>Danderyds Hantverksgrupp AB</b></p>
-                </div>
-                <div className="col-sm-5">
-                    <p> <img src="./img/check-mark.png" className="tick" />Professionella takläggare sedan 2012  </p>
-                    <p> <img src="./img/check-mark.png" className="tick" />150 genomförda takbyten i år </p>
-                    <p> <img src="./img/check-mark.png" className="tick" />Långa garantier på material och arbete</p>
-                </div>
-                <div className="col-sm-3">
-                    <button className="btn btn-primary tak-btn" ref="ROOF004" id="ROOF004" onClick={this.Send_details_roofer.bind(this, 'ROOF004')} >Begär offert</button>
-                </div></div>
-            <div className="row"></div>
-        </div>)
     }
 }
 

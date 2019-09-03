@@ -204,7 +204,7 @@ localStorage.setItem('token',data.token);
                     <div className="shdow_wt">
                          <div className="row ">
                                 <div className="col-sm-12 text-center login_txt">
-                                    <img src="./img/logo.png" />
+                                    <img src="./img/disolar_logo_black.png"  alt="image"/>
                                     <h3>Välkommen tillbaka!</h3>
                                     <h4>Logga in för att få tillgång till dinå prisuppskattningar</h4>
                                 </div>
@@ -240,7 +240,7 @@ localStorage.setItem('token',data.token);
                                            
                         <div className="row">
                             <div className="btmimg">
-                                 <img src="./img/bootm-im.jpg" className="img-responsive" />
+                                 <img src="./img/bootm-im.jpg" className="img-responsive"  alt="image"/>
                             </div>
                         </div>
                     </div>

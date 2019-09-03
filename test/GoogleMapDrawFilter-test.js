@@ -33,11 +33,5 @@ console.log('testing');
       // // sandbox.stub(, 'Map').returns(google.maps.Map);
       //
       // sinon.assert.calledOnce(handleReturnedMarkers);
-      console.log(handleReturnedMarkers.firstCall.args);
-      console.log(spy);
-      console.log(handleReturnedMarkers('hello'));
-      console.log(handleReturnedMarkers.firstCall.args);
-
     });
-
   });

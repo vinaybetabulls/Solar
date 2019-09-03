@@ -1,0 +1,157 @@
+@media screen and (min-width: 991px) and (max-width: 1199px) { 
+    .solar-panel{
+     padding: 16px;
+    }
+ }
+ @media only screen and (max-width:1199px){
+     .panels-list li{
+         word-wrap: break-word;
+     }
+     
+ }
+ 
+ 
+ @media only screen and (max-width:991px){
+     .rangeslider-horizontal .rangeslider__handle:after {
+         width: 24px!important;
+         height: 24px!important;
+     }
+     .rangeslider-horizontal {
+         height: 6px!important;
+         border-radius: 10px!important;
+     }
+     .rangeslider, .rangeslider__fill {
+         box-shadow: none!important;
+     }
+     .m-top-27 {
+         margin-top: 1%!important;
+     }
+     .news{
+         width:100%;
+     }
+     .panel-modal {
+         width: 100%!important;
+         background:#ffffff;
+     }
+     .booking-buttons .submit {
+         margin: 7px 37px;
+     }
+ }
+ 
+ @media only screen and (max-width:767px){
+     .och-style {
+         text-align: center;
+     }
+     .section-name {
+         text-align: center;
+     }
+     .elpris-name {
+         text-align: center;
+     }
+     ul.increment-icon {
+         text-align: center;
+     }
+     #header_menu {
+         margin:12px;
+     }
+     .stepper-icon{
+         width:40px;
+     }
+     .md-stepper-horizontal .md-step .md-step-circle{
+         width: 30px;
+         height: 30px;
+     }
+     .md-stepper-horizontal .md-step .md-step-bar-right{
+         left: 42%;
+     }
+     .md-stepper-horizontal .md-step .md-step-bar-left{
+         right: 40%;
+     }
+     .stepstext {
+         text-align: center;
+         font-size: 15px;
+         font-weight: 500;
+         /* width: 37px; */
+         white-space: nowrap;
+         width: 64px;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         /* border: 1px solid #000000; */
+     }
+     #autofill {
+         top: 94px !important;
+     }
+     .md-stepper-horizontal .md-step .md-step-bar-left, .md-stepper-horizontal .md-step .md-step-bar-right{
+         top:13px;
+     }
+ .map-buttons{
+     left: 0%!important;
+     margin-top: -104px;
+     width: 100%;
+ }
+ #buttonnew, #delete-button {
+     width: 89px !important;
+     height: 36px !important;
+ }
+ .map-dialog{
+     width:94%!important;
+ }
+ .rangeslider-horizontal .rangeslider__handle {
+     width: 25px;
+     height: 25px;
+ }
+ .rangeslider-horizontal .rangeslider__handle:after {
+     width: 19px;
+     height: 19px;
+ }
+ .estimate .submit {
+     padding: 9px 11px;
+     width: 103px;
+ }
+ .roof-question {
+     font-size: 15px;
+ }
+ .material .validation { 
+     width: 100%;
+ }
+ }
+ 
+ @media only screen and (max-width: 475px){
+     .stepstext {
+         font-size: 10px;
+         width: 50px;
+     }   
+     #autofill {
+         position: relative;
+       float: none!important;
+         margin: 0px auto;
+     }
+     li.lower-list {
+         width: 89px!important;
+         padding: 2px!important;
+         font-size: 15px!important;
+     }
+     li.Upper-list {
+         width: 89px!important;
+         padding: 2px!important;
+         font-size: 15px!important;
+     }
+     .slots-centering {
+         padding: 0;
+     }
+     .calc-roof {
+         width: 100%!important;
+         height: 200px!important;
+     }
+     .direction .rangeslider-horizontal {
+         height: 4px!important;
+         border-radius: 10px!important;
+     }
+ }
+ 
+ @media only screen and (max-width: 375px){
+     #autofill {
+       float: right!important;
+         margin: 0px auto;
+     }
+ }

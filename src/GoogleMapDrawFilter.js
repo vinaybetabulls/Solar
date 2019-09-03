@@ -1,70 +1,37 @@
 import React, { Component } from 'react'
-
-import cache from './ApiComponents/ScriptCache';
-import GoogleApi from './ApiComponents/GoogleApi';
+import PropTypes from 'prop-types';
 import GoogleApiComponent from './ApiComponents/GoogleApiComponent';
 import Map from './Map';
 import { parse } from 'qs';
-
-
-
-
-
 let lat;
 let lng;
-class GoogleMapDrawFilter extends React.Component {
+class GoogleMapDrawFilter extends Component {
+	constructor(props) {
+		super(props)
+	}
 
+	componentWillMount() {
+		var locationname = parse(location.search.substr(1))
+		if (locationname.location != undefined) {
+			var locationAddress = locationname.location;
+		}
+		fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCJ7I4HvFK1CZcRloBVLjnO8_JElgTRZ1o&address=${locationAddress}`)
+			.then(function (response) {
+				return response;
+			}).then(function (response) {
+				return response.json();
+			})
+			// .then(function (data) {
+			// 	if (data.results[0].geometry.location.lat != '' && data.results[0].geometry.location.lng != "") {
+			// 		// var latitude = data.results[0].geometry.location.lat;
+			// 		// var longitude = data.results[0].geometry.location.lng;
+			// 		// lat: data.results[0].geometry.location.lat;
+			// 		// lng: data.results[0].geometry.location.lat;
+			// 	}
+			// })
+	}
 
-constructor(props)
-{
-
-	super(props)
-	console.log(this.props.area);
-
-}
-
-
-
-componentWillMount()
-{
- const main = this;
- 
- var locationname=parse(location.search.substr(1))
- if(locationname.location!=undefined)
-  {
-var locationAddress=locationname.location;
-  }
-	   fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCJ7I4HvFK1CZcRloBVLjnO8_JElgTRZ1o&address=${locationAddress}`)
-    .then( function(response) {
-      return response;
-    })
-    .then( function(response) {
-    return response.json();
-	
-
-    }).then( function(data) {
-
-		if(data.results[0].geometry.location.lat!='' && data.results[0].geometry.location.lng!="" )
-			{
-				
-		var latitude=data.results[0].geometry.location.lat;
-       var  longitude=data.results[0].geometry.location.lng;
-		lat: data.results[0].geometry.location.lat;
-		lng:data.results[0].geometry.location.lat;
-
-    
-			}
-	
-		
-  })
-    	
-}
-
-
-
-
-	render () {
-
+	render() {
 		return (
 			<div className="mappositiontop">
 				<Map
@@ -81,58 +48,48 @@ var locationAddress=locationname.location;
 					apiKey={this.props.apiKey}
 					area={this.props.area}
 					roofaddress={this.props.roofaddress}
-
 				/>
-
 			</div>
 		);
 	}
 }
 
-
-
-GoogleMapDrawFilter.propTypes={
-	apiKey:React.PropTypes.string.isRequired,
-	drawMode:React.PropTypes.bool,
-	heatMap:React.PropTypes.bool,
-	markers:React.PropTypes.array,
-	mapConfig:React.PropTypes.object,
-	polygonOptions:React.PropTypes.object,
-	google:React.PropTypes.object, //is provided by wrapper
-	mapStyle:React.PropTypes.object,
-	handleReturnedMarkers:React.PropTypes.func,
-	onMarkerClick:React.PropTypes.func,
-	insertMarker:React.PropTypes.bool
+GoogleMapDrawFilter.propTypes = {
+	apiKey: PropTypes.string.isRequired,
+	drawMode: PropTypes.bool,
+	heatMap: PropTypes.bool,
+	markers: PropTypes.array,
+	mapConfig: PropTypes.object,
+	polygonOptions: PropTypes.object,
+	google: PropTypes.object, //is provided by wrapper
+	mapStyle: PropTypes.object,
+	handleReturnedMarkers: PropTypes.func,
+	onMarkerClick: PropTypes.func,
+	insertMarker: PropTypes.bool
 };
 
-GoogleMapDrawFilter.defaultProps={
-	drawMode:true,
-	insertMarker:false,
-	mapConfig:{
-		zoom:18,
-		lat:lat,
-		lng:lng,
-
+GoogleMapDrawFilter.defaultProps = {
+	drawMode: true,
+	insertMarker: false,
+	mapConfig: {
+		zoom: 18,
+		lat: lat,
+		lng: lng,
 	},
-	mapStyle:{
-		height:'600px',
+	mapStyle: {
+		height: '600px',
 		width: '100%',
 	},
-	polygonOptions:{
+	polygonOptions: {
 		fillColor: '#58beec',
 		fillOpacity: 0.3,
-		strokeColor:'#58beec',
-		strokeWeight:3,
+		strokeColor: '#58beec',
+		strokeWeight: 3,
 		clickable: true,
 		editable: true,
 		zIndex: 1
 	},
-
-
-	
-	markers:[],
+	markers: [],
 };
-
-
 
 export default GoogleApiComponent(GoogleMapDrawFilter);

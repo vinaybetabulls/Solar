@@ -286,7 +286,7 @@ location.href="/";
                      <div className="shdow_wt">
                         <div className="row ">
                                 <div className="col-sm-12 text-center login_txt">
-                                    <img src="./img/logo.png" />
+                                    <img src="./img/disolar_logo_black.png"  alt="image"/>
                      <h3>DIN PRISUPPSKATTNING ÄR FÄRDIG!</h3>
                      <h5><b>VI HAR NU GENERERAT DIN PRISUPPSKATTNING BASERAT PÅ FÖLJANDE UPPGIFTER</b>
 </h5>
@@ -321,7 +321,7 @@ location.href="/";
                                            
                         <div className="row">
                             <div className="btmimg">
-                                 <img src="./img/bootm-im.jpg" className="img-responsive" />
+                                 <img src="./img/bootm-im.jpg" className="img-responsive"  alt="image"/>
                             </div>
                         </div>
                     </div>

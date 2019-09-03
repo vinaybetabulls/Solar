@@ -1,18 +1,60 @@
 import React from 'react';
-
+import Slider from 'react-rangeslider'
 var styles;
+class Horizontal extends React.Component {
+  constructor(props, context) {
+    super(props, context)
+    this.state = {
+      value: 0
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeStart = this.handleChangeStart.bind(this);
+    this.handleChangeComplete = this.handleChangeComplete.bind(this);
+  }
 
-// drop area Component
+  handleChangeStart() {
+  };
+
+  handleChange(v) {
+    var _self = this;
+    _self.setState({
+      value: v
+    });
+  };
+
+  handleChangeComplete() {
+    this.props.handleClick(this.state.value);
+  };
+
+  render() {
+    return (
+      <div className="col-lg-8 col-md-12 col-lg-offset-2">
+        <div className='slider padd-top-bot'>
+          <Slider
+            min={0}
+            max={90}
+            value={this.state.value}
+            onChangeStart={this.handleChangeStart}
+            onChange={this.handleChange}
+            onChangeComplete={this.handleChangeComplete}
+          />
+        </div>
+      </div>
+    )
+  }
+}
+
 class DropArea extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       list: [
         { id: 1, isDragging: false, left: 0, angle: 0 },
-      ],
+      ]
     };
+    this.scrollable = this.scrollable.bind(this)
   }
+
   onDragOver(e) {
     e.preventDefault();
     return false;
@@ -26,11 +68,11 @@ class DropArea extends React.Component {
     list[index].left = (e.clientX - obj.x);
     let val = Math.floor((e.clientX - obj.x) / 3);
     list[index].angle = (Math.ceil(val / 5) * 5);
-    if(list[index].angle > 90) {
+    if (list[index].angle > 90) {
       list[index].angle = 90
-    } else if(list[index].angle < 0) {
-        list[index].angle = 0
-      }
+    } else if (list[index].angle < 0) {
+      list[index].angle = 0
+    }
     let newState = Object.assign(
       this.state, {
         list: list
@@ -39,21 +81,15 @@ class DropArea extends React.Component {
     e.preventDefault();
   }
   scrollable(e) {
-      let lists = this.state.list;
-      let indexOne = this.state.list.findIndex((item) => item.id === lists[0].id);
-      lists[indexOne].left = (e.nativeEvent.offsetX);
-      let value = Math.floor((e.nativeEvent.offsetX) / 3);
-      lists[indexOne].angle = (Math.ceil(value / 5) * 5);
-      if(lists[indexOne].angle > 90) {
-        lists[indexOne].angle = 90
-      } else if(lists[indexOne].angle < 0) {
-        lists[indexOne].angle = 0
-      }
-      let clickedState = Object.assign(
-        this.state, {
-          list: lists
-        });
-      this.setState(clickedState);
+    let lists = this.state.list;
+    let indexOne = this.state.list.findIndex((item) => item.id === lists[0].id);
+    lists[indexOne].angle = (e);
+    let clickedState = Object.assign(
+      this.state, {
+        list: lists
+      });
+    this.setState(clickedState);
+    this.props.roofAngle(lists[indexOne].angle);
   }
 
   updateStateDragging(id, isDragging) {
@@ -86,7 +122,7 @@ class DropArea extends React.Component {
     }
     return (
       <div
-        className="drop-area"
+        className="col-sm-12 align-text-center drop-area"
         onDragOver={this.onDragOver.bind(this)}
         onDrop={this.onDrop.bind(this)} >
         {items}
@@ -95,10 +131,7 @@ class DropArea extends React.Component {
   }
 };
 
-
-// draggable Component
 class Draggable extends React.Component {
-
   onMouseDown(e) {
     var elm = document.elementFromPoint(e.clientX, e.clientY);
     if (elm.className !== 'resizer') {
@@ -138,29 +171,21 @@ class Draggable extends React.Component {
     }
 
     return (
-      <div className="col-md-9 scroll" style={{ textAlign: 'center', padding: '20px' }}>
-        <div id="ratio" >
-          <div id="ratio-center"></div>
-          <div id="ratio-left" className={`rotate-left-${this.props.angle}`}></div>
-          <div id="ratio-right" className={`rotate-right-${this.props.angle}`}></div>
+      <div>
+        <div className="col-md-2"></div>
+        <div className="  scroll" style={{ textAlign: 'center', padding: '20px' }}>
+          <div id="ratio" >
+            <div id="ratio-center"></div>
+            <div id="ratio-left" className={`rotate-left-${this.props.angle}`} style={{ transform: `rotate(${this.props.angle}deg)` }}></div>
+            <div id="ratio-right" className={`rotate-right-${this.props.angle}`} style={{ transform: `rotate(-${this.props.angle}deg)` }}></div>
+          </div>
+          <div id="ratio-value">{this.props.angle}° </div>
+          <input type="hidden" name="ratioValue" id="ratioValue" ref='myInput' value={this.props.angle} />
+          <Horizontal handleClick={this.props.scrollable} />
         </div>
-        <div id="ratio-value">{this.props.angle}° </div>
-        <input type="hidden" name="ratioValue" id="ratioValue" value={this.props.angle} />
-        <div id="ratio-slider" className="slider-chart ui-slider" onClick={this.props.scrollable}>
-          <a style={{ outline: 'none', border: 'none' }}>
-            <div ref={"node"}
-              draggable={this.props.isDragging}
-              id={'item_' + this.props.id}
-              className="item unselectable ui-slider-handle ui-slider-handle-active"
-              style={styles}
-              onMouseDown={this.onMouseDown.bind(this)}
-              onMouseUp={this.onMouseUp.bind(this)}
-              onDragStart={this.onDragStart.bind(this)}
-              onDragEnd={this.onDragEnd.bind(this)}></div></a></div>
+        <div className="col-md-3">
+        </div>
       </div>
-
-
-
     );
   }
 };

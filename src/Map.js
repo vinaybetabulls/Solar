@@ -2,8 +2,6 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import isInside from 'point-in-polygon';
 import { parse } from 'qs';
-
-
 let markersArray = [];
 let bounds;
 let drawingManager;
@@ -26,7 +24,6 @@ const nextStyle = {
   marginTop: "-88px",
   position: "absolute",
   textAlign: "left",
-
 }
 
 class Map extends React.Component {
@@ -34,12 +31,9 @@ class Map extends React.Component {
     super(props);
     latitude = this.props.mapConfig.lat;
     longitude = this.props.mapConfig.lng;
-
-    var address="Djurgårdsvägen 50, 115 21 Stockholm";
-
-    if(this.props.roofaddress!="")
-    {
-      locationAddress=this.props.roofaddress
+    var address = "Djurgårdsvägen 50, 115 21 Stockholm";
+    if (this.props.roofaddress != "") {
+      locationAddress = this.props.roofaddress
     }
     this.state = {
       drawMode: true,
@@ -52,57 +46,40 @@ class Map extends React.Component {
       color: {
         backgroundColor: "#0A539C"
       }
-
     };
-
-
-
   }
 
   componentDidMount() {
     const main = this;
-
     var locationname = parse(location.search.substr(1))
     if (locationname.location != undefined) {
       locationAddress = locationname.location;
     }
-
-
+    //AIzaSyCJ7I4HvFK1CZcRloBVLjnO8_JElgTRZ1o ---old apikey
+    //AIzaSyB4prJzCvsqdW0YOKo3idjakgvZUXRR_TI
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCJ7I4HvFK1CZcRloBVLjnO8_JElgTRZ1o&address=${locationAddress}`)
       .then(function (response) {
         return response;
       })
       .then(function (response) {
         return response.json();
-
-
       }).then(function (data) {
-
         if (data.results[0].geometry.location.lat != '' && data.results[0].geometry.location.lng) {
-
           latitude = data.results[0].geometry.location.lat,
             longitude = data.results[0].geometry.location.lng
-
-
           main.setState({
             lat: latitude,
             lng: longitude,
             place: locationAddress
           }
           )
-
           main.loadMap();
           main.drawPolyline();
         }
-
-
       })
-
   }
 
   componentDidUpdate(prevProps, prevState) {
-
-
     if (prevProps.google !== this.props.google) {
       this.loadMap();
       if (this.props.drawMode) {
@@ -118,13 +95,9 @@ class Map extends React.Component {
     /* if (prevProps.markers.length!==this.props.markers.length &&this.markers!=prevProps.markers && this.state.loaded&&!this.props.heatMap){
        this.getMarkers();
      }*/
-
-
   }
 
   area(resizablePolygon) {
-
-
     area = google.maps.geometry.spherical.computeArea(resizablePolygon);
     console.log("area" + area);
   }
@@ -137,19 +110,14 @@ class Map extends React.Component {
     if (this.props.drawMode !== nextProps.drawMode && nextProps.drawMode && this.props.google) {
       this.drawPolyline();
     }
-
   }
-
   /*
-  
     heatMap(){
-  
       const {google} = this.props;
       const maps = google.maps;
       const points=this.props.markers.map((point) => (
           new google.maps.LatLng(point.latLng.lat,point.latLng.lng)
       ));
-  
       let heatmap = new maps.visualization.HeatmapLayer({
         data:points ,
         map: this.map
@@ -160,7 +128,6 @@ class Map extends React.Component {
   insertMarker() {
     const { google } = this.props;
     const maps = google.maps;
-
     google.maps.event.addListener(this.map, 'click', function (e) {
       const markerProps = ({
         position: new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()),
@@ -168,32 +135,23 @@ class Map extends React.Component {
         draggable: true
       })
       const marker = new maps.Marker(markerProps);
-
       this.props.handleReturnedMarkers({ lat: e.latLng.lat(), lng: e.latLng.lng() });
       marker.addListener('dragend', (e) => {
         this.props.handleReturnedMarkers({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-
       });
-
     }.bind(this));
-
-
-
-
   }
 
   drawPolyline() {
     const google = this.props.google;
-
     /*drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.POLYGON,
       drawingControl: false,
       polygonOptions: this.props.polygonOptions
     });*/
-
     drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.POLYGON,
-      drawingControl: true,
+      drawingControl: false,
       mapTypeControl: false,
       drawingControlOptions: {
         drawingModes: [google.maps.drawing.OverlayType.POLYGON],
@@ -221,10 +179,6 @@ class Map extends React.Component {
       this.area(resizablePolygon);
       let color_data = this.state.color;
       document.getElementById('buttonnew').style.backgroundColor = "#000";
-
-
-
-
       // Delete Polygon on click
       //======================================================
 
@@ -236,12 +190,10 @@ class Map extends React.Component {
               this.drawPolyline();
             });
       */
-
       google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', function (e) {
-
         polyline.setMap(null);
         resizablePolygon = [];
-        drawingManager.setDrawingMode(true);
+        drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
         let color_data = color_data;
         document.getElementById('buttonnew').style.backgroundColor = "#0A539C";
         /*   color_data.backgroundColor="#58beec";
@@ -251,11 +203,7 @@ class Map extends React.Component {
 
 
         //this.delete();
-
-
       });
-
-
       //======================================================
       // Filtering function
       //======================================================
@@ -308,7 +256,6 @@ class Map extends React.Component {
     }.bind(this))
   }
 
-
   //======================================================
   // DISPLAY MARKERS IN MAP
   //======================================================
@@ -355,7 +302,6 @@ class Map extends React.Component {
   }
 */
 
-
   loadMap() {
     try {
       const { google } = this.props;
@@ -371,27 +317,15 @@ class Map extends React.Component {
         center: center,
         zoom: zoom,
         zoomControl: true,
-        styles: [
-          {
-            "featureType": "poi",
-            "stylers": [
-              { "visibility": "off" }
-            ]
-          }
-        ],
-
-
-
         drawingMode: google.maps.drawing.OverlayType.POLYGON,
         drawingControl: true,
         streetViewControl: false,
         drawingControlOptions: { drawingModes: [google.maps.drawing.OverlayType.POLYGON] },
         mapTypeId: google.maps.MapTypeId.SATELLITE,
-
-
-
       })
+      
       this.map = new maps.Map(node, mapConfiguration);
+      this.map.setTilt(0);
       google.maps.event.addListenerOnce(this.map, 'idle', () => {
         /*if (!this.props.heatMap) {
          // this.getMarkers();
@@ -400,36 +334,21 @@ class Map extends React.Component {
       this.setState({
         loaded: true
       });
-
     } catch (e) {
       console.log('error in load');
     }
-
   }
 
-
-
   autocmp() {
-
     let geocoder = new google.maps.Geocoder();
-
-
     const aref = this.refs.autocomplete;
-
-
     const node = ReactDOM.findDOMNode(aref);
-
     var autocomplete = new google.maps.places.Autocomplete(node);
-
-
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
       if (!place.geometry) {
         return;
       }
-
-
-
       this.setState({
         place: place.formatted_address,
         position: place.geometry.location
@@ -440,31 +359,24 @@ class Map extends React.Component {
       })
       this.props.mapConfig.lat = this.state.position.lat()
       this.props.mapConfig.lng = this.state.position.lng()
-
       this.loadMap();
-
       if (this.props.drawMode) {
         this.drawPolyline();
       }
       console.log(this.state.position.lat());
       console.log(this.state.position.lng());
       console.log(this.state.place);
-
     })
   }
 
   calarea() {
     if (resizablePolygon != undefined) {
       var areaval = google.maps.geometry.spherical.computeArea(resizablePolygon);
-
-
       for (var i = 0; i < resizablePolygon.getLength(); i++) {
         coordinates.push(resizablePolygon.getAt(i).toUrlValue(6))
       }
       var stringifycordimates = JSON.stringify(coordinates);
-      console.log(stringifycordimates)
       console.log(this.state.place)
-
       this.props.area(areaval, this.state.place, stringifycordimates);
 
     } else {
@@ -472,21 +384,19 @@ class Map extends React.Component {
     }
   }
 
-
-
   render() {
     return (
       <div className="map-position" >
         <div id="myModal" className="modal fade" role="dialog" >
-          <div className="modal-dialog" style={{ width: "75%",top:81 }} >
+          <div className="modal-dialog map-dialog" style={{ width: "75%", top: 81 }} >
             <div className="modal-content">
               <div className="modal-header modal-hed">
                 <button type="button" className="close" data-dismiss="modal">&times;</button>
               </div>
               <div className="modal-body row">
-                <div className="col-md-8">
+                <div className="col-md-7">
                   {/*}  <iframe width="560" height="315" src="https://www.youtube.com/embed/sXr7_2sYLDw?autoplay=1" ></iframe>*/}
-                  <img src="./img/ezgif.com-video-to-gif.gif" className="img-responsive" style={{ minHeight: "200px", width: "100%" }} />
+                  <img src="./img/ezgif.com-video-to-gif.gif" className="img-responsive" style={{ minHeight: "200px", width: "100%" }} alt="image" />
                 </div><div className="col-md-4">
                   <ul className="stegs_map">
                     <li><span> 1</span>: Hitta Ditt Hus och zooma in med + symbolen längst ner till höger på kartan</li>
@@ -497,41 +407,28 @@ class Map extends React.Component {
                   </ul>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
-        
-          <input
+        <input
           id="autofill"
-            ref='autocomplete'
-            type="text"
-            className="form-control"
-            onChange={this.autocmp.bind(this)}
-            
-            placeholder="Ange en plats" />
-            {/*}
-         <input
-
-            type='submit'
-            value='Go' />
-        
-    */}
-
+          ref='autocomplete'
+          type="text"
+          className="form-control"
+          onChange={this.autocmp.bind(this)}
+          placeholder="Ange en plats" />
         <div
           style={this.props.mapStyle}
           ref='map'>
           Loading map...
       </div>
-
-
-        {<div style={deleteStyle} ><button id="delete-button" className="btn btn-info">Rensa</button>
-          <button onClick={this.calarea.bind(this)} className="btn btn-info" id="buttonnew" style={{ ...this.state.color }} >Nästa</button></div>
+        {<div style={deleteStyle} className="map-buttons" >
+          <button id="delete-button" className="btn btn-info">Rensa</button>
+          <button onClick={this.calarea.bind(this)} className="btn btn-info " id="buttonnew" style={{ ...this.state.color }} >Nästa</button>
+        </div>
         }
       </div>)
   }
 }
-
 
 export default Map;

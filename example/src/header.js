@@ -1,26 +1,17 @@
 ﻿
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom'
-
-//import mapimage from './download.jpg'
-
-import Img from 'react-image';
-
 
 class Header extends Component {
   constructor(props) {
     super(props);
-
   }
+  
   logout() {
     localStorage.clear();
     location.href = "/";
   }
 
-
   render() {
-
     return (
       <div className="example2">
         <nav className="navbar navbar-default custm-nav ">
@@ -32,13 +23,12 @@ class Header extends Component {
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
               </button>
-              <a className="navbar-brand" href="https://digitak.se"><img src="./img/logo.png" alt="Dispute Bills" />
+              <a className="navbar-brand" href="http://www.digisolar.se/"><img src="./img/white_logo.png" alt="Dispute Bills" />
               </a>
             </div>
             <div id="navbar2" className="navbar-collapse collapse">
               <Checklogin login={this.props.login} logout={this.logout.bind(this)} headindex={this.props.headindex} />
             </div>
-
           </div>
         </nav>
       </div>
@@ -52,15 +42,9 @@ class Checklogin extends Component {
   }
 
   render() {
-
-
-
-
-
-
     if (this.props.login == true) {
       return (<ul className="nav navbar-nav navbar-right nav-ul">
-        <li > <a href="https://www.digitak.se/" id="header_menu" >Tillbaka till startsidan</a></li>
+        <li > <a href="http://www.digisolar.se/" id="header_menu" >Tillbaka till startsidan</a></li>
         {/*}
         <li className={this.props.headindex == 6 ? "active" : ""} > <a href="https://www.digitak.se/">Start</a></li>
         <li className={this.props.headindex == 6 ? "active" : ""} > <a href="https://www.digitak.se/blogs/">Takbloggen</a></li>
@@ -82,10 +66,8 @@ class Checklogin extends Component {
 
       </ul>)
     } else {
-
-      console.log(this.props);
       return (<ul className="nav navbar-nav navbar-right nav-ul">
-        <li > <a href="https://www.digitak.se/" id="header_menu" >Tillbaka till startsidan</a></li>
+        <li > <a href="http://www.digisolar.se//" id="header_menu" >Tillbaka till startsidan</a></li>
         {/*}
         <li className={this.props.headindex == 6 ? "active" : ""} > <a href="https://www.digitak.se/">Start</a></li>
         <li className={this.props.headindex == 6 ? "active" : ""} > <a href="https://www.digitak.se/blogs/">Takbloggen</a></li>
@@ -98,7 +80,6 @@ class Checklogin extends Component {
 */}
       </ul>)
     }
-
   }
 }
 

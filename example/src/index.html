@@ -1,41 +1,77 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-	<title>Digitak</title>
-
+    <title>Digisolar</title>
+    <meta charset="utf-8">
+    <!-- Google Tag Manager -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#337ab7" />
+    <meta name="description" content="Digisolar genomför prisuppskattningar och förstudier för solpaneler tak villa.">
+    <meta name="keywords" content="digi solar, solar application, react app,react application" />
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-M5Z3MD8');</script>
+    <!-- End Google Tag Manager -->
 </head>
-<body>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+<body oncontextmenu="return false">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K6MMDV5" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
-  <link rel="stylesheet" href="example.css">
-  	<link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
- 
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css"/>
+    <link rel="stylesheet" href="styles/example.css">
+    <!-- <link rel="stylesheet" href="admin.css"> -->
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/directionstyles.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Muli" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.0/rangeslider.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-   <script type="text/javascript">
-          $(document).ready(function() {
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/react-day-picker/lib/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
 
-
-//$("html, body").animate({ scrollTop: 100 }, "slow");
-
-$('#example').DataTable();
-    $('#myModal').modal('show'); 
-});
-
-  
-        </script>
-	<div id="app"></div>	
-	<script src="common.js"></script>
-	<script src="bundle.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Muli" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.0/rangeslider.min.css" rel="stylesheet">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#example').DataTable();
+            $('#myModal').modal('show');
+        });
+        // document.onkeydown = function (e) {
+        //     if (event.keyCode == 123) {
+        //         return false;
+        //     }
+        //     if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+        //         return false;
+        //     }
+        //     if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+        //         return false;
+        //     }
+        //     if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+        //         return false;
+        //     }
+        //     if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+        //         return false;
+        //     }
+        // }
+    </script>
+    <div id="app"></div>
+    <script src="common.js"></script>
+    <script src="bundle.js"></script>
     <script src="example.js"></script>
- 
-
-
 </body>
+
+</html>

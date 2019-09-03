@@ -269,7 +269,7 @@ class Contractorsignup extends Component {
             <div className="container login-top">
                 <br />
                 <div className="row csignup" id="box" >
-                    <div className="col-sm-12  test1" style={formleft}><img src="./img/contractor_signup-banner.jpg" className="img-responsive" />
+                    <div className="col-sm-12  test1" style={formleft}><img src="./img/contractor_signup-banner.jpg" className="img-responsive"  alt="image"/>
                        <div className="form_top1">
                         {/*<Login loginsubmit={this.loginsubmit}  validateField={this.validateField.bind(this)} />*/}
                         <Csignup signupnsubmit={this.signupsubmit.bind(this)}

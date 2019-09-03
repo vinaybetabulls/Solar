@@ -1,11 +1,9 @@
 export const GoogleApi = function(opts) {
   opts = opts || {}
-
   const apiKey = opts.apiKey;
   const libraries = opts.libraries || [];
   const client = opts.client;
   const URL = 'https://maps.googleapis.com/maps/api/js';
-
   const googleVersion = '3.25';
   let script = null;
   let google = window.google = null;
@@ -13,9 +11,7 @@ export const GoogleApi = function(opts) {
   let channel = null;
   let language = null;
   let region = null;
-
   let onLoadEvents = [];
-
   const url = () => {
     let url = URL;
     let params = {
@@ -32,10 +28,8 @@ export const GoogleApi = function(opts) {
     let paramStr = Object.keys(params)
         .filter(k => !!params[k])
         .map(k => `${k}=${params[k]}`).join('&');
-
     return `${url}?${paramStr}`;
   }
-
   return url();
 }
 

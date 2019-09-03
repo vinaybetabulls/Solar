@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 
 const stylestyle = {
     padding: "30px 20px 20px 20px",
@@ -10,7 +9,7 @@ const stylestyle = {
     boxShadow: "0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07)",
     transition: "all 0.3s ease-out",
     WebkitTransform: "all 0.3s ease-out",
-    minHeight:"190px"
+    minHeight: "190px"
 }
 const textstyle = {
     marginTop: 10,
@@ -26,8 +25,6 @@ class StyleComponent extends Component {
             previous: {},
             next: {}
         }
-
-
         this.styles = [{
             image: "./img/choose1.png",
             name: "Sadeltak",
@@ -38,7 +35,6 @@ class StyleComponent extends Component {
             name: "Valmat tak",
             cost: 1000
         },
-
         {
             image: "./img/choose4.png",
             name: "Brutet Tak​",
@@ -49,7 +45,8 @@ class StyleComponent extends Component {
             name: "Halvvalmat tak",
             cost: 820,
 
-        }, {
+        },
+        {
             image: "./img/pulpettak_style.jpg",
             name: "Pulpettak",
             cost: 600
@@ -57,26 +54,21 @@ class StyleComponent extends Component {
 
     }
 
-
-    stchoose(name) {
-        alert(name)
-    }
     render() {
-
-
         return (
             <div className="container mt-5">
-
-                <div style={textstyle}> <h3 className="roof_subhead"><button id="backbutton" onClick={this.props.back.bind(this, 1)}><i className="fa fa-arrow-left"></i>
-
-                </button>Vilken design har ditt tak?</h3>
+                <div style={textstyle}>
+                    <h3 className="roof_subhead">
+                        <button id="backbutton" onClick={this.props.back.bind(this, 1)}>
+                            <i className="fa fa-arrow-left"></i>
+                        </button>Vilken design har ditt tak?</h3>
                 </div>
                 <div className="row justify-content-center">
                     <div className="col-sm-1"></div>
-
                     {
                         this.styles.map((data, index) => {
-                            return (<div className="col-sm-2 " key={index} onClick={this.props.styval.bind(this, data.name, data.cost)} > <div className="onfocs_brdr" style={stylestyle}   ><img className="img-responsive" src={data.image} />
+                            return (<div className="col-sm-2 " key={index} onClick={this.props.styval.bind(this, data.name, data.cost)} > <div className="onfocs_brdr" style={stylestyle}   >
+                                <img className="img-responsive" src={data.image} alt="image" />
                                 <br />
                                 <p>{data.name}</p> </div>
 
@@ -84,10 +76,8 @@ class StyleComponent extends Component {
                             )
                         })
                     }
-
-
-
-                </div></div>)
+                </div>
+            </div>)
     }
 }
 export default StyleComponent;

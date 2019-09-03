@@ -1,0 +1,142 @@
+
+.calc-wrap {
+  padding-top: 78px;
+  overflow: hidden;
+}
+#map {
+  height: 320px;
+}
+.calc-input-row:not(:last-child) {
+  border-bottom: 1px solid #ddd;
+}
+.calc-roof {
+  width: 300px;
+  height: 300px;
+  position: relative;
+}
+.calc-roof-img,
+.calc-angle-hand {
+  transition: transform .2s;
+}
+.calc-roof-direction,
+.calc-angle-top {
+  position: absolute;
+  z-index: 1;
+}
+.calc-angle-top {
+  left: 50%;
+  top: 50%;
+  margin-left: -12px;
+  margin-top: -12px;
+}
+.calc-angle-hand--left {
+  transform-origin: 100% 50%;
+  transform: rotate(-45deg);
+}
+.calc-angle-hand--right {
+  transform-origin: 0 50%;
+  transform: rotate(45deg);
+}
+.calc-roof-direction--north,
+.calc-roof-direction--south {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.calc-roof-direction--east,
+.calc-roof-direction--west {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.calculator-results-column-inner a {
+  text-decoration: underline;
+}
+
+.calculator-results-column-inner .product-info-read-more {
+  text-decoration: none;
+}
+
+.calculator-results-column-inner .product-info-read-more img {
+  float: none;
+  vertical-align: middle;
+}
+
+.product-info-read-more.opened img {
+  transform: rotate(180deg);
+}
+  
+.flex-viewport {
+  overflow: visible !important;
+}
+.px2 {
+    padding-left: .9375rem;
+    padding-right: .9375rem;
+}
+.border-box {
+    box-sizing: border-box;
+}
+.justify-center {
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+.items-center {
+    -ms-flex-align: center;
+    align-items: center;
+}
+.mx-auto {
+    margin-right: auto;
+}
+.ml-auto, .mx-auto {
+    margin-left: auto;
+}
+.mt2 {
+    margin-top: .9375rem;
+}
+.top-0 {
+    top: 0;
+}
+
+.bottom-0 {
+    bottom: 0;
+}
+.left-0 {
+    left: 0;
+}
+.right-0 {
+    right: 0;
+}   
+
+.m-top-27 {
+  margin-top: 20%;
+}
+
+.direction .rangeslider-horizontal {
+  height: 6px;
+  border-radius: 10px!important;
+}
+.direction .rangeslider__handle-tooltip {
+   display: none
+  }
+
+  ul.directions-list {
+    list-style: none;
+    padding: 0px;
+}
+li.Upper-list {
+  width: 200px;
+  text-align: center;
+  background: #ffb1007d;
+  padding: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 18px;
+}
+li.lower-list {
+  width: 200px;
+  text-align: center;
+  background:#ffb100;
+  padding: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 18px;
+}

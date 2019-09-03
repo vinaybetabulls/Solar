@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-var mainurl=require('./config.json');
+var mainurl = require('./config.json');
 
 
 class Textc extends Component {
@@ -10,14 +10,9 @@ class Textc extends Component {
         this.state = {
             userdata: ""
         }
-        console.log(props);
-console.log(cdaat.url);
         fetch('./config.json').then(function (response) {
-            console.log(response)
         })
     }
-
-
 
     componentDidMount() {
         const main = this;
@@ -28,10 +23,7 @@ console.log(cdaat.url);
             phone: '7386949079',
             type: 'USER'
         }
-
-
-
-        fetch( mainurl.url+'users/registeruser', {
+        fetch(mainurl.url + 'users/registeruser', {
             method: "post", headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 "Access-Control-Request-Headers": "*",
@@ -43,21 +35,16 @@ console.log(cdaat.url);
             })
             .then(function (response) {
                 return response.json();
-
-
             }).then(function (data) {
-                console.log(data)
                 if (data.status == 400) {
                     main.setState({
                         userdata: data.message
                     })
                 } else {
-
                     main.setState({
                         userdata: data.data
                     })
                 }
-
             })
         /*
             method: 'POST',
@@ -86,14 +73,10 @@ console.log(cdaat.url);
            */
     }
     render() {
-
         return (<div>
             {this.state.userdata}
         </div>);
     }
-
-
-
 }
 
 export default Textc;

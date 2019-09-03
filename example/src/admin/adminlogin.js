@@ -76,7 +76,6 @@ class Loginadmin extends Component {
             responseerror:""
         };
 
-        console.log("props"+this.props.logintest);
     }
 
 
@@ -162,8 +161,6 @@ localStorage.setItem('token',data.token);
     }
 
     validateField(fieldName, value) {
-        console.log(fieldName + "-" + value);
-        console.log(this.state.formErrors);
 
         let fieldValidationErrors = this.state.formErrors;
         let passwordValid = this.state.passwordValid;
@@ -179,14 +176,12 @@ localStorage.setItem('token',data.token);
 
                 fieldValidationErrors.email = emailValid ? '' : 'Invalid email ';
                 this.setState({ formErrors: fieldValidationErrors, emailValid: emailValid, email: value });
-                console.log(emailValid)
 
                 break;
             case 'password':
                 passwordValid = value.length >= 6;
                 fieldValidationErrors.password = passwordValid ? '' : 'Password have minimum 6 charecters ';
                 this.setState({ formErrors: fieldValidationErrors, passwordValid: passwordValid, password: value });
-                console.log(passwordValid);
                 break;
 
             default:
