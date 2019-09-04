@@ -155,10 +155,14 @@ class LoginEstimate extends Component {
         var Tax_on_battery = (84485 * 25) / 100
         
         var Battery_cost_after_tax = Battery_cost + Tax_on_battery;
+        sessionStorage.setItem('battery',Battery_cost_after_tax)
         var Battery_incentives = 50000;
         var Cost_of_solar_roof_installation_after_incentives =Display_cost_of_solar_roof_installation - Solar_incentives;
+        sessionStorage.setItem('solarIncentives',Cost_of_solar_roof_installation_after_incentives)
         var Cost_of_battery_after_incentives = Battery_cost_after_tax - Battery_incentives;
+        sessionStorage.setItem('batteryIncentives',Cost_of_battery_after_incentives)
         var Final_cost = Cost_of_solar_roof_installation_after_incentives + Cost_of_battery_after_incentives;
+        sessionStorage.setItem('final_cost',Final_cost)
     }
 
     loginsubmit(event) {

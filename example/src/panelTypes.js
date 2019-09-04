@@ -388,7 +388,7 @@ class PanelComponent extends Component {
                 panelarrayUpdate: true,
                 modalIsOpen: false,
                 packetPopup: true,
-                value: this.state.value
+                value: this.state.value,
             })
             this.annualOutput(capacity, 'Custom paket', count);
         } else {
@@ -398,7 +398,8 @@ class PanelComponent extends Component {
                 validationThree: false,
                 panelarrayUpdate: true,
                 customPacket: "Ange antal paneler",
-                packetPopup: true
+                packetPopup: true,
+                soltakCustomPaket: 'Specify the area of solar roof'
             })
             this.annualOutput(capacity, name, count);
         }
@@ -756,7 +757,7 @@ class PanelComponent extends Component {
                                         <div className="col-sm-6 col-md-3 panding_no" key={index} onClick={this.selectedCount.bind(this, data.packet, data.count, "Specify the area of solar roof")} >
                                             <div className="onfocs_brdr1 b-white solar-panel" style={(data.packet == this.state.packetName) ? selectedStyle : matstyle}>
                                                 {(data.packet === "Custom paket" && this.state.soltakCustomPaket == "Specify the area of solar roof") ? (
-                                                    <div className='f21 text-capital specify-card'>Specify the area of solar roof</div>
+                                                    <div className='f21 text-capital specify-card'>{data.count}</div>
                                                 ) : (
                                                         <div className='packets-font'>{data.count}</div>
                                                     )}

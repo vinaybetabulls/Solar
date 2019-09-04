@@ -115,7 +115,12 @@ class Areaestimate extends Component {
             elprisökning: 2,
             updation: false,
             annualProduction: this.props.annualoutput,
-            availableslots: ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '17:00']
+            availableslots: ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '17:00'],
+            pannel_capacity:this.props.pannel_capacity,
+            battery1:this.props.battery1,
+            solarIncentives:this.props.solarIncentives,
+            batteryIncentvies:this.props.batteryIncentvies,
+            finalCost:this.props.finalCost
         }
         if (this.props.logedin) {
             setTimeout(() => {
@@ -812,6 +817,32 @@ class Areaestimate extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                {/* update -*/}
+                                <div className="col-sm-6 col-md-6">
+                                                <div className="area-estimation-card-heading font-quicksand ">Final Cost</div>
+                                                <div className="col-md-12 col-sm-12 estimation-panel-card">
+                                                    <div className="col-sm-12 col-md-6 card-content-bottom">
+                                                        <div className="col-sm-12">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Batteri: </strong><br />
+                                                                <b className="f15">{this.state.battery1}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12 col-md-12">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Solcellsstöd:</strong><br />
+                                                                <b className="f15">{this.state.solarIncentives}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12  col-md-12 ">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Batteristöd </strong><br />
+                                                                <b className="f15">{this.state.batteryIncentvies}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12  col-md-12 ">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Totalt inkl, moms </strong><br />
+                                                                <b className="f15">{this.state.finalCost}</b></h3>
+                                                        </div>
+                                                    </div>
+                                                   
+                                                </div>
+                                            </div>
+                                {/* end --*/}
                                             <div className="col-sm-6 col-md-6">
                                                 <div className="area-estimation-card-heading font-quicksand ">Din Produkt</div>
                                                 <div className="col-md-12 col-sm-12 estimation-panel-card">

@@ -320,6 +320,10 @@ class Main extends Component {
                   panel_cost= {parseInt(sessionStorage.getItem('panel_cost'))}
                   pannel_name = {sessionStorage.getItem('pannel_name')}
                   pannel_capacity = {sessionStorage.getItem('pannel_capacity')}
+                  battery = {sessionStorage.getItem('battery')}
+                  solarIncentives = {sessionStorage.getItem('solarIncentives')}
+                  batteryIncentvies = {sessionStorage.getItem('battbatteryIncentiveser')}
+                  finalCost = {sessionStorage.getItem('final_cost')}
                 />
               </div>
             </React.Fragment>
@@ -361,6 +365,12 @@ class Main extends Component {
                   annualoutput={(this.state.annualoutput != '' && typeof this.state.annualoutput != 'undefined') ? this.state.annualoutput : sessionStorage.getItem('annualoutput')}
                   roofaddress={(sessionStorage.getItem('Roofaddress') === null) ? this.state.Roofaddress : sessionStorage.getItem('Roofaddress')}
                   packetName={sessionStorage.getItem('packetName')}
+                  
+                  pannel_capacity = {sessionStorage.getItem('pannel_capacity')}
+                  battery1 = {sessionStorage.getItem('battery')}
+                  solarIncentives = {sessionStorage.getItem('solarIncentives')}
+                  batteryIncentvies = {sessionStorage.getItem('battbatteryIncentiveser')}
+                  finalCost = {sessionStorage.getItem('final_cost')}
                 />
               </div>
             </React.Fragment>
