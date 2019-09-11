@@ -16,8 +16,9 @@ class ESaving extends Component {
             maximumPackets: 0,
             customPacket: "Specify Number of panels",
             selectedPacket: 'Custom paket',
-        };
+            };
         this.panelsArray = [];
+        this.soltakPanelsArray=[]
         this.initalSumUp = this.initalSumUp.bind(this);
         this.decrement = this.decrement.bind(this);
         this.increment = this.increment.bind(this);
@@ -83,6 +84,12 @@ class ESaving extends Component {
             var pi = Math.PI;
             return degrees * (pi / 180);
         }
+        this.soltakPanelsArray = [
+            {packet: 'Small paket', count: 25},
+            {packet: 'Standard paket', count: 50},
+            {packet: 'Max paket', count: 99},
+            {packet:'Custom paket', count : 'Specify the area of solar roof'}
+        ]
         var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
         if (roofArea > 400) {
             this.panelsArray = [];
@@ -164,9 +171,19 @@ class ESaving extends Component {
         }
         if (this.panelsArray.length) {
             var _self = this;
-            var packetValuesObject = _self.panelsArray.filter(function (packetObj) {
-                return packetObj.packet === _self.props.packetName
-            })
+            let pannelName =sessionStorage.getItem('pannelName');
+            var packetValuesObject;
+            if(pannelName=='solpanel'){
+                 packetValuesObject = _self.panelsArray.filter(function (packetObj) {
+                    return packetObj.packet === _self.props.packetName
+                })
+            }
+            else{
+                 packetValuesObject = _self.soltakPanelsArray.filter(function (packetObj) {
+                    return packetObj.packet === _self.props.packetName
+                })
+            }
+            
             if (packetValuesObject[0].packet == 'Small paket' || packetValuesObject[0].packet == 'Standard paket') {
                 primarySidePanels = this.props.noOfPanels;
             } else if (packetValuesObject[0].packet == 'Max paket') {

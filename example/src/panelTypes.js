@@ -292,7 +292,7 @@ class PanelComponent extends Component {
                     return packetObj.packet === packet
                 })
             }
-            
+            sessionStorage.setItem('selected_panel',this.state.panelName)
             totalInstalledPowerInkw = (countOfPanels * watts) / 1000;
             if (packetValuesObject[0].packet == 'Small paket' || packetValuesObject[0].packet == 'Standard paket') {
                 primarySidePanels = countOfPanels;
@@ -359,6 +359,7 @@ class PanelComponent extends Component {
         sessionStorage.setItem('panel_cost',cost)
         sessionStorage.setItem('pannel_name',panel);
         sessionStorage.setItem('pannel_capacity',capacity);
+        sessionStorage.setItem('pannelName',panelName);
         this.annualOutput(capacity, this.state.packetName, this.state.packetsCount)
     }
 

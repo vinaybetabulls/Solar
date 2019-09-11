@@ -7,7 +7,9 @@
      .panels-list li{
          word-wrap: break-word;
      }
-     
+     .pris_height{
+        padding: 3em 4em 4em 3em!important;
+    }
  }
  
  
@@ -36,6 +38,15 @@
      .booking-buttons .submit {
          margin: 7px 37px;
      }
+     .estimation-panel-card {
+        height: 100% !important;
+    }
+    .area-estimation-cards {
+       height: 100% !important;
+    }
+    .pris_height{
+        height: 100% !important;
+    }
  }
  
  @media only screen and (max-width:767px){

@@ -154,8 +154,91 @@ class Areaestimate extends Component {
             }
         }
     }
+initialValues(p, bat, count) {
+    var Total_roof_area= sessionStorage.getItem('roofarea');
+    var solar_roof_area = JSON.parse(sessionStorage.getItem('roofAreaPkt')).normalRoofArea;
+    var normal_roof_area=Total_roof_area- solar_roof_area;
+    var cost_of_solar_roof_tiles = solar_roof_area * parseInt(sessionStorage.getItem('panel_cost'));
+    var cost_of_normal_roof_tiles = normal_roof_area*parseInt(sessionStorage.getItem('panel_cost'));
+    var Cost_of_material = cost_of_solar_roof_tiles + cost_of_normal_roof_tiles;
+    var labor_cost = Total_roof_area * 250 ;
+    var floorPlan = ((this.props.floors).split("plan")[0]).trim();
+    var floor = parseInt(floorPlan);
+    var skylift=0;
+    if(floor <=2) {
+        skylift=0;
+    }
+    else if(floor >= 3){
+        skylift = 5200;
+    }
+    var Cost_of_electrician = 6000;
+    var Cost_of_cable = 540;
+    var Cost_of_transport = 10000;
+    var Cost_of_container = 10000;
+    var capcity_price = 0
+    var cost_of_invertor =0;
+    if( this.props.pannel_name === 'Midsommar soltak') {
+        
+     cost_of_invertor = Total_roof_area * this.props.pannel_capacity;
+    }
+    else if(this.props.pannel_name == 'Bendars sunwave palema') {
+        cost_of_invertor = Total_roof_area * this.props.pannel_capacity;
+    }
+        if(cost_of_invertor < 4000 ) {
+            capcity_price = 9560
+        }
+     if(cost_of_invertor>4001 && cost_of_invertor<5000){
+            capcity_price = 9660
+        }
+        if(cost_of_invertor>5001 && cost_of_invertor<7000) {
+            capcity_price = 11500
+        }
+        if(cost_of_invertor>7001 && cost_of_invertor<8000) {
+            capcity_price = 11830
+        }
+        if(cost_of_invertor>8001 && cost_of_invertor<10000) {
+            capcity_price = 12760
+        }
+        if(cost_of_invertor>10001 && cost_of_invertor<15000) {
+            capcity_price = 11350
+        }
+        if(cost_of_invertor>15001 && cost_of_invertor<17000) {
+            capcity_price = 11620
+        } 
+        if(cost_of_invertor>17001 && cost_of_invertor<25000) {
+            capcity_price = 16100
+        }
+        if(cost_of_invertor>25001 && cost_of_invertor<27600) {
+            capcity_price = 16100
+        }
+        if(cost_of_invertor>27600) {
+            capcity_price = 20000
+        }
+    
+    
+    var Cost_of_solar_roof_installation_before_tax = Cost_of_material + cost_of_invertor + Cost_of_cable + Cost_of_container + Cost_of_transport + Cost_of_electrician + skylift;
+    var Digisolar_commission = (Cost_of_solar_roof_installation_before_tax * 15) / 100;
+    if(Digisolar_commission > 15000) {
+        Digisolar_commission = 15000;
+    }
+    var Cost_of_solar_roof_installatio_with_commission = Cost_of_solar_roof_installation_before_tax + Digisolar_commission;
+    var Tax_on_solar_roof_installation = (Cost_of_solar_roof_installatio_with_commission * 25) / 100;
+    var Cost_of_solar_roof_installation_after_tax = Cost_of_solar_roof_installatio_with_commission + Tax_on_solar_roof_installation;
+    var Display_cost_of_solar_roof_installation = (Cost_of_solar_roof_installation_after_tax * 93) / 100;
+    var Solar_incentives = (Display_cost_of_solar_roof_installation * 20) / 100;
+    var Battery_cost = 84485;
 
-    initialValues(p, bat, count) {
+    var Tax_on_battery = (84485 * 25) / 100
+    
+    var Battery_cost_after_tax = Battery_cost + Tax_on_battery;
+    sessionStorage.setItem('battery',Battery_cost_after_tax)
+    var Battery_incentives = 50000;
+    var Cost_of_solar_roof_installation_after_incentives =Display_cost_of_solar_roof_installation - Solar_incentives;
+    sessionStorage.setItem('solarIncentives',Cost_of_solar_roof_installation_after_incentives)
+    var Cost_of_battery_after_incentives = Battery_cost_after_tax - Battery_incentives;
+    sessionStorage.setItem('batteryIncentives',Cost_of_battery_after_incentives)
+    var Final_cost = Cost_of_solar_roof_installation_after_incentives + Cost_of_battery_after_incentives;
+    sessionStorage.setItem('final_cost',Final_cost)
         let _self = this;
         if (p === 'Standard' || _self.state.panel === 'Standard') {
             capacity = 270;
@@ -817,11 +900,25 @@ class Areaestimate extends Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                {/* update -*/}
-                                <div className="col-sm-6 col-md-6">
-                                                <div className="area-estimation-card-heading font-quicksand ">Final Cost</div>
+                               
+                                            <div className="col-sm-6 col-md-6">
+                                                <div className="area-estimation-card-heading font-quicksand ">Din Produkt</div>
                                                 <div className="col-md-12 col-sm-12 estimation-panel-card">
-                                                    <div className="col-sm-12 col-md-6 card-content-bottom">
+                                                    {(sessionStorage.getItem('selected_panel')=='solpanel' ) ?
+                                                        <div className="col-sm-12 col-md-6 card-content-bottom">
+                                                        <div className="col-sm-12">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">SOLPANEL: </strong><br />
+                                                                <b className="f15">{this.state.panel}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12 col-md-12">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">ANTal PANEL:</strong><br />
+                                                                <b className="f15">{this.state.panelsCount}</b></h3>
+                                                        </div>
+                                                        <div className="col-sm-12  col-md-12 ">
+                                                            <h3 id="eststep2"><strong className="uppercase f15">BATTERI </strong><br />
+                                                                <b className="f15">{this.state.battery}</b></h3>
+                                                        </div>
+                                                    </div> :        <div className="col-sm-12 col-md-6 card-content-bottom">
                                                         <div className="col-sm-12">
                                                             <h3 id="eststep2"><strong className="uppercase f15">Batteri: </strong><br />
                                                                 <b className="f15">{this.state.battery1}</b></h3>
@@ -839,27 +936,8 @@ class Areaestimate extends Component {
                                                                 <b className="f15">{this.state.finalCost}</b></h3>
                                                         </div>
                                                     </div>
-                                                   
-                                                </div>
-                                            </div>
-                                {/* end --*/}
-                                            <div className="col-sm-6 col-md-6">
-                                                <div className="area-estimation-card-heading font-quicksand ">Din Produkt</div>
-                                                <div className="col-md-12 col-sm-12 estimation-panel-card">
-                                                    <div className="col-sm-12 col-md-6 card-content-bottom">
-                                                        <div className="col-sm-12">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">SOLPANEL: </strong><br />
-                                                                <b className="f15">{this.state.panel}</b></h3>
-                                                        </div>
-                                                        <div className="col-sm-12 col-md-12">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">ANTal PANEL:</strong><br />
-                                                                <b className="f15">{this.state.panelsCount}</b></h3>
-                                                        </div>
-                                                        <div className="col-sm-12  col-md-12 ">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">BATTERI </strong><br />
-                                                                <b className="f15">{this.state.battery}</b></h3>
-                                                        </div>
-                                                    </div>
+                                                }
+                                                
                                                     <div className="col-md-6 col-sm-12 align-text-center">
                                                         <button className="panel-card-button" onClick={this.modalPanelpopup}>Byt Produkt</button>
                                                     </div>
@@ -885,9 +963,9 @@ class Areaestimate extends Component {
                                                 </div>
                                             </div>
                                             <div className="col-sm-6 col-md-6">
-                                                <div className="area-estimation-card-heading font-quicksand">Pris hgfdsa</div>
+                                                <div className="area-estimation-card-heading font-quicksand">Pris </div>
                                                 <div className="col-md-12 panding_no">
-                                                    <div className="table-bg">
+                                                    <div className="table-bg  pris_height">
                                                         <table className="table amount-total">
                                                             <tbody>
                                                                 <tr className="font-weignt-700">

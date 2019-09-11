@@ -128,6 +128,7 @@ class Main extends Component {
       sessionStorage.setItem('componentindex', 7);
       this.areaEst = this.areaEstimetack.bind(this);
       this.areaEst(this);
+      console.log(sessionStorage.getItem('solarIncentives'))
       this.setState({
         componentindex: 7,
         e_consumption: sessionStorage.getItem('e_consumption'),
@@ -143,7 +144,11 @@ class Main extends Component {
         panel: sessionStorage.getItem('panel'),
         battery: sessionStorage.getItem('battery'),
         panelsCount: sessionStorage.getItem('panelsCount'),
-        annualoutput: sessionStorage.getItem('annualoutput')
+        annualoutput: sessionStorage.getItem('annualoutput'),
+                  battery1 :sessionStorage.getItem('battery'),
+                  solarIncentives :sessionStorage.getItem('solarIncentives'),
+                  batteryIncentvies :sessionStorage.getItem('battbatteryIncentiveser'),
+                  finalCost :sessionStorage.getItem('final_cost')
       })
     } else {
       sessionStorage.setItem('componentindex', 6);
@@ -185,7 +190,11 @@ class Main extends Component {
       roofarea: sessionStorage.getItem('roofarea'),
       property_type: sessionStorage.getItem('property_type'),
       floors: sessionStorage.getItem('floors'),
-      roof_pitch: sessionStorage.getItem('roof_pitch')
+      roof_pitch: sessionStorage.getItem('roof_pitch'),
+      battery1 :sessionStorage.getItem('battery'),
+      solarIncentives :sessionStorage.getItem('solarIncentives'),
+      batteryIncentvies :sessionStorage.getItem('battbatteryIncentiveser'),
+      finalCost :sessionStorage.getItem('final_cost')
     });
   }
 

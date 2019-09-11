@@ -2227,7 +2227,7 @@ padding: 11px;
   border-bottom: 1px solid rgba(136, 136, 136, 0.43);
 }
 .packets-font {
-  font-size: 5em
+  font-size: 26px;
 }
 
 .panel-border {
@@ -2255,8 +2255,11 @@ padding: 11px;
   padding: 18px 0 30px 2em;
     border-radius: 1em;
     background-color: #c3e0ce;
+    height: 320px;
 }
-
+.pris_height{
+  height: 320px;
+}
 
 .area-estimation-card-heading {
   font-size: 2em;
@@ -2282,6 +2285,7 @@ padding: 11px;
   padding:2em 2em 2em 2em;
   background-color: #f5deb361;
   border-radius: 1em;
+  height:320px;
 }
 .panel-card-button {
   background-color: #8ee2ae;
@@ -2706,7 +2710,8 @@ panels-valid-head {
 }
 
 .panel-font  {
-  font-size : 12px
+  font-size : 12px;
+  height: 30px;
 }
 
 .panel-calc-show {
