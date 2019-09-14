@@ -779,7 +779,11 @@ initialValues(p, bat, count) {
 
     SendEstimation() {
         var token = localStorage.getItem("token");
-        var email = JSON.parse(localStorage.getItem("userdata")).email;
+
+        var userdata = JSON.parse(localStorage.getItem("userdata"))
+        if(userdata){
+         var email = userdata.email
+        };
         var payload = {
             area: this.props.area,
             coordinates: JSON.stringify(this.props.coordinates),
