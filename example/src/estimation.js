@@ -303,7 +303,6 @@ class Main extends Component {
             <React.Fragment>
               <Steps stepindex={parseInt(sessionStorage.getItem('componentindex')) + 1} />
               <div className="container-fluid" style={style}>
-                {alert(this.props.panel_cost)}
                 <LoginEstimate
                   location={this.state.location}
                   material={(this.state.roofmaterial != '' && typeof this.state.roofmaterial != 'undefined') ? this.state.roofmaterial : sessionStorage.getItem('roofmaterial')}
@@ -329,7 +328,7 @@ class Main extends Component {
                   panel_cost= {parseInt(sessionStorage.getItem('panel_cost'))}
                   pannel_name = {sessionStorage.getItem('pannel_name')}
                   pannel_capacity = {sessionStorage.getItem('pannel_capacity')}
-                  battery = {sessionStorage.getItem('battery')}
+                  battery1 = {sessionStorage.getItem('battery')}
                   solarIncentives = {sessionStorage.getItem('solarIncentives')}
                   batteryIncentvies = {sessionStorage.getItem('battbatteryIncentiveser')}
                   finalCost = {sessionStorage.getItem('final_cost')}
