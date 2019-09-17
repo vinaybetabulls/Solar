@@ -85,11 +85,11 @@ class ESaving extends Component {
             return degrees * (pi / 180);
         }
         this.soltakPanelsArray = [
-            {packet: 'Small paket', count: 25},
-            {packet: 'Standard paket', count: 50},
-            {packet: 'Max paket', count: 99},
+            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
+            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
+            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
             {packet:'Custom paket', count : 'Specify the area of solar roof'}
-        ]
+        ];
         var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
         if (roofArea > 400) {
             this.panelsArray = [];
@@ -150,6 +150,35 @@ class ESaving extends Component {
             this.state.minimumPackets = parseInt(Standardpacket);
         }
     }
+    calculateRoofArea(name,roofArea) {
+        var smallRoofArea = 0;
+        var normalRoofArea = 0;
+        function degrees_to_radians(degrees) {
+            var pi = Math.PI;
+            return degrees * (pi / 180);
+        }
+        if(name === 'Small paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 25)/100;
+            normalRoofArea = (roofArea * 75)/100;
+        }
+        if(name === 'Standard paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 50)/100;
+            normalRoofArea = (roofArea * 50)/100;
+        }
+        if(name === 'Max paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 100)/100;
+            normalRoofArea = (roofArea * 25)/100 ;
+        }
+        sessionStorage.setItem('roofAreaPkt',JSON.stringify({
+            smallRoofArea : smallRoofArea,
+            normalRoofArea: normalRoofArea
+        }))
+        
+       return normalRoofArea;
+    }
 
     initalSumUp() {
         var primarySideAnualOutput, secondarySideAnnualOutput,
@@ -201,8 +230,9 @@ class ESaving extends Component {
 
         breakpoint = true;
         yearlySavingsdata = [];
-        installedPowerOnPrimarySide = primarySidePanels * this.props.capacity;
-        installedPowerOnSecondarySide = secondarySidePanels * this.props.capacity;
+        let capacity = this.props.capacity || parseInt(sessionStorage.getItem('pannel_capacity'));
+        installedPowerOnPrimarySide = primarySidePanels * capacity;
+        installedPowerOnSecondarySide = secondarySidePanels * capacity;
         primarySideAnualOutput = installedPowerOnPrimarySide * primarySideRadiation * solarRadiation * powerLoss * reducedPower;
         secondarySideAnnualOutput = installedPowerOnSecondarySide * secondarySideRadiation * solarRadiation * powerLoss * reducedPower;
         annualOutput = (primarySideAnualOutput + secondarySideAnnualOutput) / 1000;
