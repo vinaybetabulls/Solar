@@ -201,7 +201,7 @@ class PanelComponent extends Component {
                 { packet: this.state.selectedPacket, count: this.state.customPacket }
             ]
             this.state.maximumPackets = parseInt(Standardpacket);
-            this.state.minimumPackets = parseInt(Standardpacket);
+            this.state.minimumPackets = parseInt(Standardpacket)
         }
     }
 
@@ -501,6 +501,7 @@ class PanelComponent extends Component {
                     _self.setState({ maximumPackets: Standardpacket, minimumPackets: 12 })
                 }
             }
+            sessionStorage.setItem('panel_max_pkt',_self.state.maximumPackets);
         }
     }
 

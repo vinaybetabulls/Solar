@@ -924,21 +924,18 @@ initialValues(p, bat, count) {
                                                         </div>
                                                     </div> :        <div className="col-sm-12 col-md-6 card-content-bottom">
                                                         <div className="col-sm-12">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">Batteri: </strong><br />
-                                                                <b className="f15">{this.state.battery1}</b></h3>
+                                                            <h3 id="eststep2"><strong className="uppercase f15">SOlTAK </strong><br />
+                                                                <b className="f15">{sessionStorage.getItem('pannel_name')}</b></h3>
                                                         </div>
                                                         <div className="col-sm-12 col-md-12">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">Solcellsstöd:</strong><br />
-                                                                <b className="f15">{this.state.solarIncentives}</b></h3>
+                                                            <h3 id="eststep2"><strong className="uppercase f15">SOlTAK  YTA</strong><br />
+                                                                <b className="f15">{sessionStorage.getItem('panel_max_pkt')}</b></h3>
                                                         </div>
                                                         <div className="col-sm-12  col-md-12 ">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">Batteristöd </strong><br />
-                                                                <b className="f15">{this.state.batteryIncentvies}</b></h3>
+                                                            <h3 id="eststep2"><strong className="uppercase f15">Batteri </strong><br />
+                                                                <b className="f15">{this.state.battery}</b></h3>
                                                         </div>
-                                                        <div className="col-sm-12  col-md-12 ">
-                                                            <h3 id="eststep2"><strong className="uppercase f15">Totalt inkl, moms </strong><br />
-                                                                <b className="f15">{this.state.finalCost}</b></h3>
-                                                        </div>
+                                                  
                                                     </div>
                                                 }
                                                 
