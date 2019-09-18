@@ -140,11 +140,28 @@ class PanelComponent extends Component {
         }
         var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
         this.soltakPanelsArray = [
-            {packet: 'Small paket', count: 25},
-            {packet: 'Standard paket', count: 50},
-            {packet: 'Max paket', count: 99},
+            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
+            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
+            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
             {packet:'Custom paket', count : 'Specify the area of solar roof'}
-        ]
+        ];
+        console.log(this.soltakPanelsArray)
+       
+        if(name === 'Small paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 25)/100;
+            normalRoofArea = (roofArea * 75)/100;
+        }
+        if(name === 'Standard paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 50)/100;
+            normalRoofArea = (roofArea * 50)/100;
+        }
+        if(name === 'Max paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 100)/100;
+            normalRoofArea = roofArea ;
+        }
         if (roofArea > 400) {
             this.panelsArray = [];
             Standardpacket = 100;
@@ -429,11 +446,12 @@ class PanelComponent extends Component {
             smallRoofArea = (roofArea * 100)/100;
             normalRoofArea = roofArea ;
         }
-       
         sessionStorage.setItem('roofAreaPkt',JSON.stringify({
             smallRoofArea : smallRoofArea,
             normalRoofArea: normalRoofArea
         }))
+        
+       return normalRoofArea;
     }
 
     componentWillUpdate(state, prop) {
@@ -594,7 +612,7 @@ class PanelComponent extends Component {
             <div className="">
                 <div className="seperation-line">
                     <div className="container">
-                        <div className="col-md-12 heading_text font-quicksand bold" >Välj Solpaneler</div>
+                       
                         <div className="col-sm-12 col-sm-offset-3 material" style={{ textAlign: 'center', padding: '30px', margin: '0px auto' }}>
                             {this.state.validationOne ? (
                                 <div className='validation' style={{ margin: '0px auto' }}><span>Please select the Panel type</span></div>
@@ -603,6 +621,7 @@ class PanelComponent extends Component {
                         <div className="col-md-1"></div>
                         <div className="col-md-12 col-sm-12 align-text-center">
                         <div className="col-sm-6 col-md-6" id="panel-types">
+                        <div className="col-md-12 heading_text font-quicksand bold" >Solpanel</div>
                             {
                                 this.panels.map((data, index) => {
                                     return (
@@ -617,7 +636,11 @@ class PanelComponent extends Component {
                                 })
                             }
                         </div>
+                        <div className="select-solar">
+
+                        </div>
                         <div className="col-sm-6 col-md-6" id="panel-types">
+                        <div className="col-md-12 heading_text font-quicksand bold" >Soltak</div>
                             {
                                 this.soltakPanels.map((data, index) => {
                                     return (

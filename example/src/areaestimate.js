@@ -67,7 +67,8 @@ var TaxOnInstallation,
     CostOfOptimizer, skylift, CostOfKit = 800, CostOfMountingSystem,
     CostOfCable = 540, transportCost,
     laborCost, electricianCost = 5000, digisolarComission = 10000, superVisorCommission = 15000,
-    installationBeforeTaxNoComm, installationBeforeTax, installationAfterIncentives, displayPrice, batteryAfterIncentive;
+    installationBeforeTaxNoComm, installationBeforeTax, installationAfterIncentives, displayPrice, batteryAfterIncentive,Display_cost_of_solar_roof_installation,Battery_cost_after_tax,
+    Solar_incentives,Cost_of_battery_after_incentives,Final_cost;
 class Areaestimate extends Component {
     constructor(props) {
         super(props);
@@ -106,21 +107,22 @@ class Areaestimate extends Component {
             closeUpdatePanelmodal: false,
             datepicker: true,
             calenderIndex: 1,
-            panelsCount: parseInt(this.props.panelsCount),
+            panelsCount: parseInt(this.props.panelsCount) || parseInt(sessionStorage.getItem('panelsCount')),
             battery: this.props.battery,
             panel: this.props.panel,
-            e_consumption: this.props.e_consumption,
+            e_consumption: this.props.e_consumption || (parseInt(sessionStorage.setItem('e_consumption').split('kwh')[0]).trim()),
             packetName: this.props.packetName,
             elpris: 0.9,
             elprisökning: 2,
             updation: false,
             annualProduction: this.props.annualoutput,
             availableslots: ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '17:00'],
-            pannel_capacity:this.props.pannel_capacity,
+            pannel_capacity:this.props.pannel_capacity || parseInt(sessionStorage.getItem('pannel_capacity')),
             battery1:this.props.battery1,
             solarIncentives:this.props.solarIncentives,
             batteryIncentvies:this.props.batteryIncentvies,
-            finalCost:this.props.finalCost
+            finalCost:this.props.finalCost,
+            display_cost_of_solar_roof_installation:''
         }
         if (this.props.logedin) {
             setTimeout(() => {
@@ -224,20 +226,20 @@ initialValues(p, bat, count) {
     var Cost_of_solar_roof_installatio_with_commission = Cost_of_solar_roof_installation_before_tax + Digisolar_commission;
     var Tax_on_solar_roof_installation = (Cost_of_solar_roof_installatio_with_commission * 25) / 100;
     var Cost_of_solar_roof_installation_after_tax = Cost_of_solar_roof_installatio_with_commission + Tax_on_solar_roof_installation;
-    var Display_cost_of_solar_roof_installation = (Cost_of_solar_roof_installation_after_tax * 93) / 100;
-    var Solar_incentives = (Display_cost_of_solar_roof_installation * 20) / 100;
+     Display_cost_of_solar_roof_installation = (Cost_of_solar_roof_installation_after_tax * 93) / 100;
+     Solar_incentives = (Display_cost_of_solar_roof_installation * 20) / 100;
     var Battery_cost = 84485;
 
     var Tax_on_battery = (84485 * 25) / 100
     
-    var Battery_cost_after_tax = Battery_cost + Tax_on_battery;
+     Battery_cost_after_tax = Battery_cost + Tax_on_battery;
     sessionStorage.setItem('battery',Battery_cost_after_tax)
     var Battery_incentives = 50000;
     var Cost_of_solar_roof_installation_after_incentives =Display_cost_of_solar_roof_installation - Solar_incentives;
     sessionStorage.setItem('solarIncentives',Cost_of_solar_roof_installation_after_incentives)
-    var Cost_of_battery_after_incentives = Battery_cost_after_tax - Battery_incentives;
+     Cost_of_battery_after_incentives = Battery_cost_after_tax - Battery_incentives;
     sessionStorage.setItem('batteryIncentives',Cost_of_battery_after_incentives)
-    var Final_cost = Cost_of_solar_roof_installation_after_incentives + Cost_of_battery_after_incentives;
+    Final_cost = Cost_of_solar_roof_installation_after_incentives + Cost_of_battery_after_incentives;
     sessionStorage.setItem('final_cost',Final_cost)
         let _self = this;
         if (p === 'Standard' || _self.state.panel === 'Standard') {
@@ -974,35 +976,55 @@ initialValues(p, bat, count) {
                                                                         Solpanelsanlägging  och installation
                                                                 </td>
                                                                     <td className="table-price-width">
+                                                                    {(sessionStorage.getItem('selected_panel')=='solpanel' ) ?
                                                                         <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(displayPrice.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        :
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(Display_cost_of_solar_roof_installation.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                    }
                                                                         <span className="f21"> SEK</span>
                                                                     </td>
                                                                 </tr>
                                                                 <tr className="font-weignt-700">
                                                                     <td className="table-cat padding-left-none w48">Batteri</td>
                                                                     <td className="table-price-width">
+                                                                    {(sessionStorage.getItem('selected_panel')=='solpanel' ) ?
                                                                         <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(BatteryCostAfterTax.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        :
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(Battery_cost_after_tax.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                }
                                                                         <span className="f21"> SEK</span>
                                                                     </td>
                                                                 </tr>
                                                                 <tr className=" font-weignt-700">
                                                                     <td className="table-cat padding-left-none w48">Solcellsstöd</td>
                                                                     <td className="table-price-width">
+                                                                    {(sessionStorage.getItem('selected_panel')=='solpanel' ) ?
                                                                         <CurrencyFormat style={{ fontSize: 25 }} value={-parseFloat(soalrIncentives.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        :
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={-parseFloat(Solar_incentives.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                            }
                                                                         <span className="f21"> SEK</span>
                                                                     </td>
                                                                 </tr>
                                                                 <tr className="total-border font-weignt-700">
                                                                     <td className="table-cat padding-left-none w48">Batteristöd</td>
                                                                     <td className="table-price-width">
+                                                                    {(sessionStorage.getItem('selected_panel')=='solpanel' ) ?
                                                                         <CurrencyFormat style={{ fontSize: 25 }} value={batteryIncentives > 0 ? -parseFloat(batteryIncentives.toFixed(0)) : batteryIncentives} displayType={'text'} thousandSeparator={' '} />
+                                                                        :
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={Cost_of_battery_after_incentives > 0 ? -parseFloat(Cost_of_battery_after_incentives.toFixed(0)) : Cost_of_battery_after_incentives} displayType={'text'} thousandSeparator={' '} />
+                                                        }
                                                                         <span className="f21"> SEK</span>
                                                                     </td>
                                                                 </tr>
                                                                 <tr className="font-weignt-700">
                                                                     <td className="table-cat padding-left-none w48">Total(inkl moms)</td>
                                                                     <td className="table-price-width">
+                                                                    {(sessionStorage.getItem('selected_panel')=='solpanel' ) ?
                                                                         <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(finalCost.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                                        :
+                                                                        <CurrencyFormat style={{ fontSize: 25 }} value={parseFloat(Final_cost.toFixed(0))} displayType={'text'} thousandSeparator={' '} />
+                                                    }
                                                                         <span className="f21"> SEK</span></td>
                                                                 </tr>
                                                             </tbody>

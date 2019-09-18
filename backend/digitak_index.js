@@ -326,9 +326,7 @@ app.use("/users", users);
 // app.use("/admin", admin);
 app.use("/contractor", contractor);
 
-app.get('/*', function (req, res) {
-	res.render('index.html');
-})
+
 app.listen(port);
 
 console.log("it is run on port" + port); 

@@ -2260,7 +2260,15 @@ padding: 11px;
 .pris_height{
   height: 320px;
 }
-
+.select-solar {
+  width: 2px;
+  background: #d4d4d4;
+  height: 64%;
+  position: absolute;
+  left: 50%;
+  display: inline-block;
+  top: 90px;
+}
 .area-estimation-card-heading {
   font-size: 2em;
   padding:1em;
@@ -2720,4 +2728,10 @@ panels-valid-head {
 
 .panel-calc-hide {
   visibility: hidden;
+}
+
+@media (max-width:767px){
+  .select-solar {
+    display:none;
+    }
 }

@@ -610,6 +610,7 @@ font-family: tiemposheadlinesm;
     width: 800!important;
     margin: 30px auto;
 }
+
     }
 
         
@@ -2288,6 +2289,15 @@ padding: 11px;
 .pris_height{
   height: 320px;
 }
+.select-solar {
+  width: 2px;
+  background: #d4d4d4;
+  height: 64%;
+  position: absolute;
+  left: 50%;
+  display: inline-block;
+  top: 90px;
+}
 .panel-card-button {
   background-color: #8ee2ae;
   border-radius: 21px !important;
@@ -2714,3 +2724,11 @@ panels-valid-head {
   height: 30px;
 
 }
+
+
+@media (max-width:767px){
+  .select-solar {
+    display:none;
+    }
+}
+
