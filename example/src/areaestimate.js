@@ -110,7 +110,7 @@ class Areaestimate extends Component {
             panelsCount: parseInt(this.props.panelsCount) || parseInt(sessionStorage.getItem('panelsCount')),
             battery: this.props.battery,
             panel: this.props.panel,
-            e_consumption: this.props.e_consumption || (parseInt(sessionStorage.setItem('e_consumption').split('kwh')[0]).trim()),
+            e_consumption: this.props.e_consumption || (parseInt(sessionStorage.getItem('e_consumption').split('kwh')[0]).trim()),
             packetName: this.props.packetName,
             elpris: 0.9,
             elprisökning: 2,
@@ -249,7 +249,7 @@ initialValues(p, bat, count) {
             capacity = 320;
             panelPrice = 1400;
         }
-
+        capacity = capacity ? capacity : sessionStorage.getItem('pannel_capacity')
         if (count) {
             solarPanelsCount = parseInt(count);
         } else if (_self.state.panelsCount) {
@@ -931,7 +931,7 @@ initialValues(p, bat, count) {
                                                         </div>
                                                         <div className="col-sm-12 col-md-12">
                                                             <h3 id="eststep2"><strong className="uppercase f15">SOlTAK  YTA</strong><br />
-                                                                <b className="f15">{sessionStorage.getItem('panel_max_pkt')}</b></h3>
+                                                                <b className="f15">{Math.floor(sessionStorage.getItem('smallRoofAreaValue'))}</b></h3>
                                                         </div>
                                                         <div className="col-sm-12  col-md-12 ">
                                                             <h3 id="eststep2"><strong className="uppercase f15">Batteri </strong><br />

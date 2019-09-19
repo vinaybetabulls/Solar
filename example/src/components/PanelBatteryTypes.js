@@ -76,6 +76,8 @@ class PanelBatteryTypes extends Component {
             maximumPackets: 0,
             panelCountValidation: false,
             minimumPackets: 0,
+            soltakPanels:[],
+            soltakCustomPaket: 'Specify the area of soloar roof'
         }
         this.modalpopup = this.modalpopup.bind(this)
         Modal.setAppElement('body');
@@ -95,6 +97,8 @@ class PanelBatteryTypes extends Component {
         this.closePacketModal = this.closePacketModal.bind(this);
         this.openPacketPopup = this.openPacketPopup.bind(this);
         this.annualOutput = this.annualOutput.bind(this);
+        this.calculateRoofArea = this.calculateRoofArea.bind(this)
+
 
         this.panels = [{
             image: "./img/premium_panel2.jpg",
@@ -106,6 +110,16 @@ class PanelBatteryTypes extends Component {
             name: "Standard",
             cost: 1400
         }];
+        this.soltakPanels = [ {
+            image: "./img/Standard_Panel2.jpg",
+            name: "Midsommar soltak",
+            cost: 1600
+        },
+        {
+            image: "./img/Standard_Panel2.jpg",
+            name: "Bendars sunwave palema",
+            cost: 1800
+        }]
         this.batteries = [
             {
                 image: "./img/premium-battery.png",
@@ -128,6 +142,21 @@ class PanelBatteryTypes extends Component {
             {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
             {packet:'Custom paket', count : 'Specify the area of solar roof'}
         ];
+        if(name === 'Small paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 25)/100;
+            normalRoofArea = (roofArea * 75)/100;
+        }
+        if(name === 'Standard paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 50)/100;
+            normalRoofArea = (roofArea * 50)/100;
+        }
+        if(name === 'Max paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 100)/100;
+            normalRoofArea = roofArea ;
+        }
         if (roofArea > 400) {
             this.panelsArray = [];
             Standardpacket = 100;
@@ -243,17 +272,30 @@ class PanelBatteryTypes extends Component {
         this.setState({ popup: true, modalIsOpen: true })
     }
 
-    selectedPanel(panel, cost) {
+    selectedPanel(panel, cost, panelName) {
+        
         if (panel === 'Standard') {
             capacity = 270;
         } else if (panel === 'Premium') {
             capacity = 320;
         }
+        else if(panel === 'Midsommar soltak') {
+            capacity = 110 ;
+        }
+        else if(panel === 'Bendars sunwave palema') {
+            capacity = 105;
+        }
         this.setState({
             panel: panel,
             panel_cost: cost,
-            validationOne: false
+            validationOne: false,
+            panelName: panelName,
+            //panelCount: panelsArray
         });
+        sessionStorage.setItem('panel_cost',cost)
+        sessionStorage.setItem('pannel_name',panel);
+        sessionStorage.setItem('pannel_capacity',capacity);
+        sessionStorage.setItem('pannelName',panelName);
         this.annualOutput(capacity, this.state.packetName, this.state.packetsCount)
     }
 
@@ -381,9 +423,17 @@ class PanelBatteryTypes extends Component {
         }
 
         if (packet) {
-            var packetValuesObject = this.panelsArray.filter(function (packetObj) {
-                return packetObj.packet === packet
-            })
+            if(this.state.panelName == 'soltak') {
+                var packetValuesObject = this.soltakPanelsArray.filter(function (packetObj) {
+                    return packetObj.packet === packet
+                })
+            }
+            else if(this.state.panelName == 'solpanel') {
+                var packetValuesObject = this.panelsArray.filter(function (packetObj) {
+                    return packetObj.packet === packet
+                })
+            }
+            sessionStorage.setItem('selected_panel',this.state.panelName)
             totalInstalledPowerInkw = (countOfPanels * watts) / 1000;
             if (packetValuesObject[0].packet == 'Small paket' || packetValuesObject[0].packet == 'Standard paket') {
                 primarySidePanels = countOfPanels;
@@ -410,6 +460,17 @@ class PanelBatteryTypes extends Component {
     }
 
     selectedCount(name, count) {
+        function degrees_to_radians(degrees) {
+            var pi = Math.PI;
+            return degrees * (pi / 180);
+        }
+        var roofArea = parseInt(this.props.area) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+        this.soltakPanelsArray = [
+            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
+            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
+            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
+            {packet:'Custom paket', count : 'Specify the area of solar roof'}
+        ];
         if (name == 'Custom paket' || name == 'Selected Paket') {
             this.setState({ popup: true, modalIsOpen: true })
         } else if (name === '') {
@@ -440,6 +501,18 @@ class PanelBatteryTypes extends Component {
     }
 
     componentWillUpdate(state, prop) {
+        
+        function degrees_to_radians(degrees) {
+            var pi = Math.PI;
+            return degrees * (pi / 180);
+        }
+        var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+        this.soltakPanelsArray = [
+            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
+            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
+            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
+            {packet:'Custom paket', count : 'Specify the area of solar roof'}
+        ];
         let _self = this;
         setTimeout(update(prop), 2000);
         function update(props) {
@@ -604,20 +677,39 @@ class PanelBatteryTypes extends Component {
                             ) : (null)}
                         </div>
                         <div className="col-md-1"></div>
-                        <div className="col-sm-12 col-md-10" id="panel-types">
+                        <div className="col-md-12 col-sm-12 align-text-center">
+                        <div className="col-sm-6 col-md-6" id="panel-types">
+                        <div className="col-md-12 heading_text font-quicksand bold" >Solpanel</div>
                             {
                                 this.panels.map((data, index) => {
                                     return (
-                                        <div className="col-sm-6 col-md-4" key={index} onClick={this.selectedPanel.bind(this, data.name, data.cost)} >
+                                        <div className="col-sm-6 col-md-6" key={index} onClick={this.selectedPanel.bind(this, data.name, data.cost,'solpanel')} >
                                             <div className="onfocs_brdr b-white" style={(data.name == this.state.panel) ? selectedStyle : matstyle}>
                                                 <img src={data.image} alt={data.name} className="img-responsive" />
                                                 <br />
-                                                <p className="m-top9">{data.name} panel</p>
+                                                <p className="m-top9 panel-font">{data.name} panel</p>
                                             </div>
                                         </div>
                                     )
                                 })
                             }
+                        </div>
+                        <div className="col-sm-6 col-md-6" id="panel-types">
+                        <div className="col-md-12 heading_text font-quicksand bold" >Soltak</div>
+                            {
+                                this.soltakPanels.map((data, index) => {
+                                    return (
+                                        <div className="col-sm-6 col-md-6" key={index} onClick={this.selectedPanel.bind(this, data.name, data.cost,'soltak')} >
+                                            <div className="onfocs_brdr b-white" style={(data.name == this.state.panel) ? selectedStyle : matstyle}>
+                                                <img src={data.image} alt={data.name} className="img-responsive" />
+                                                <br />
+                                                <p className="m-top9 panel-font">{data.name} panel</p>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                         </div>
                         <div className="col-md-12 col-sm-12 align-text-center">
                             <a className="hiperLink" onClick={this.openPanelPopup.bind(this)}>Läs mer om solpanel</a>
@@ -666,6 +758,182 @@ class PanelBatteryTypes extends Component {
 
                     </div>
                 </div>
+                <div className="col-sm-12 ">
+                    <div className="container">
+                        <div className="col-md-12 heading_text font-quicksand bold" >välj antal solpaneler</div>
+                        <div className="">
+                        <div className="col-sm-12 material" style={{ textAlign: 'center', padding: '30px', margin: '0px auto' }}>
+                                {this.state.validationThree ? (
+                                    <div className='validation' style={{ margin: '0px auto' }}><span>Please select the packet type</span></div>
+                                ) : (null)}
+                            </div>
+                            <div className="col-md-1"></div>
+                            <div className="col-sm-12 col-md-10" id="panels-count">
+                                {this.state.popup ? (
+                                    <div>
+                                        <Modal
+                                            isOpen={this.state.modalIsOpen}
+                                            onAfterOpen={this.afterOpenModal}
+                                            onRequestClose={this.closeModal}
+                                            style={customStyles}
+                                            className="panel-modal"
+                                            contentLabel="Specify packet">
+                                            <div className="col-md-12 panding_no">
+                                                <div className="boka-heading">Ange antal paneler</div>
+                                                <div className="f-right">
+                                                    <button className="close-button" onClick={this.closeModal}>X</button>
+                                                </div>
+                                            </div>
+                                            <form>
+                                                {this.state.panelCountValidation ?
+                                                    (<div className="col-md-12 panels-valid-head">
+                                                        <div className="panels-count-validation">
+                                                            Panels range is {this.state.maximumPackets} - {this.state.minimumPackets}</div>
+                                                    </div>) : (null)}
+
+                                                <div className="col-md-12 align-text-center slots-centering ">
+                                                    <div className="move-left">
+                                                        <div onClick={this.increment.bind(this)}>
+                                                            <img src="./img/caret-symbol.png" alt="increment" />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <input id='counter' value={this.state.value} onChange={this.countOfpanels} />
+                                                    </div>
+                                                    <div className="move-left">
+                                                        <div onClick={this.decrement.bind(this)}>
+                                                            <img src="./img/down-arrow.png" alt='decrement' /> </div>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-12 booking-buttons align-text-center">
+                                                    <button className="submit" onClick={this.closeModal}>Avbryt</button>
+                                                    <button className="submit" disabled={this.state.panelCountValidation} onClick={this.selectedCount.bind(this, '', this.state.value)}>Ok</button>
+                                                </div>
+                                            </form>
+                                        </Modal>
+                                    </div>
+                                ) : (null)}
+                                {(this.state.panelName === 'solpanel' || this.state.panelName == undefined) ?  this.panelsArray.map((data, index) => {
+                                    return (
+                                        <div className="col-sm-6 col-md-3 panding_no" key={index} onClick={this.selectedCount.bind(this, data.packet, data.count)} >
+                                            <div className="onfocs_brdr1 b-white solar-panel" style={(data.packet == this.state.packetName) ? selectedStyle : matstyle}>
+                                                {(data.packet === "Custom paket" && this.state.customPacket == "Ange antal paneler") ? (
+                                                    <div className='f21 text-capital specify-card'>{data.count}</div>
+                                                ) : (
+                                                        <div className='packets-font'>{data.count}</div>
+                                                    )}
+                                                <br />
+                                                <br />
+                                                <p className="m-top9">{data.packet}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                    
+                                }): null}
+                                {(this.state.panelName === 'soltak'  && this.state.panelName !== undefined) ?  this.soltakPanelsArray.map((data,index)=>{
+                                     return (
+                                        <div className="col-sm-6 col-md-3 panding_no" key={index} onClick={this.selectedCount.bind(this, data.packet, data.count, "Specify the area of solar roof")} >
+                                            <div className="onfocs_brdr1 b-white solar-panel" style={(data.packet == this.state.packetName) ? selectedStyle : matstyle}>
+                                                {(data.packet === "Custom paket" && this.state.soltakCustomPaket == "Specify the area of solar roof") ? (
+                                                    <div className='f21 text-capital specify-card'>{data.count}</div>
+                                                ) : (
+                                                        <div className='packets-font'>{data.count}</div>
+                                                    )}
+                                                <br />
+                                                <br />
+                                                <p className="m-top9">{data.packet}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                }) : null}
+                            </div>
+                            <div className="col-md-12 col-sm-12 align-text-center">
+                                {this.state.packetPopup && this.state.panel && this.state.panelName == 'solpanel' ? (
+                                    <div>
+                                        <div className="col-md-1"></div>
+                                        <div className="col-md-10 col-sm-12 panding_no panel-count-info-border">
+                                            <div className="col-sm-6 col-md-4 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">MAX ANTAL SOLARPANELER<br />(Takyta har plats for)</p>
+                                                    <div className='panel-values-info'>
+                                                        {this.state.maximumPackets}</div>
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6 col-md-4 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">VALT ANTAL SOLARPANELER</p>
+                                                    <br />
+                                                    <div className='panel-values-info'>{this.state.packetsCount}</div>
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6 col-md-4 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">EFFEKT</p>
+                                                    <br />
+                                                    <div className='panel-values-info no-border'>{totalInstalledPowerInkw}
+                                                        <span> kWh</span></div>
+                                                </div>
+                                            </div>
+                                            {/* <div className="col-sm-6 col-md-3 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">ÅRSPRODUKTION</p>
+                                                    <br />
+                                                    <div className='panel-values-info'>{parseInt(this.state.annualOutput)}
+                                                        <span> KWh</span>
+                                                    </div>
+                                                </div>
+                                            </div> */}
+                                        </div>
+                                    </div>
+                                ) : (
+                                        null
+                                    )}
+                                    {this.state.packetPopup && this.state.panel && this.state.panelName == 'soltak' ? (
+                                    <div>
+                                        <div className="col-md-1"></div>
+                                        <div className="col-md-10 col-sm-12 panding_no panel-count-info-border">
+                                            <div className="col-sm-6 col-md-4 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">Tak YTA</p>
+                                                    <div className='panel-values-info no-border'>
+                                                        {this.state.maximumPackets}
+                                                        <span> kvm</span></div>
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6 col-md-4 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">VALT SOLTAK YTA</p>
+                                                    <br />
+                                                    <div className='panel-values-info'>{this.state.packetsCount}</div>
+                                                </div>
+                                            </div>
+                                            <div className="col-sm-6 col-md-4 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">EFFEKT</p>
+                                                    <br />
+                                                    <div className='panel-values-info no-border'>{totalInstalledPowerInkw}
+                                                        <span> kWh</span></div>
+                                                </div>
+                                            </div>
+                                            {/* <div className="col-sm-6 col-md-3 panding_no">
+                                                <div className="list-head">
+                                                    <p className="panel-count-info">ÅRSPRODUKTION</p>
+                                                    <br />
+                                                    <div className='panel-values-info'>{parseInt(this.state.annualOutput)}
+                                                        <span> KWh</span>
+                                                    </div>
+                                                </div>
+                                            </div> */}
+                                        </div>
+                                    </div>
+                                ) : (
+                                        null
+                                    )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 <div className="col-sm-12 center-line-seperation">
                     <div className="container">
                         <div className="col-md-12 heading_text font-quicksand bold" >välj Batteri</div>
@@ -737,122 +1005,7 @@ class PanelBatteryTypes extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="col-sm-12 ">
-                    <div className="container">
-                        <div className="col-md-12 heading_text font-quicksand bold" >välj antal solpaneler</div>
-                        <div className="">
-                            <div className="col-sm-12 material" style={{ textAlign: 'center', padding: '30px', margin: '0px auto' }}>
-                                {this.state.validationThree ? (
-                                    <div className='validation' style={{ margin: '0px auto' }}><span>Please select the packet type</span></div>
-                                ) : (null)}
-                            </div>
-                            <div className="col-md-1"></div>
-                            <div className="col-sm-12 col-md-10" id="panels-count">
-                                {this.state.popup ? (
-                                    <div>
-                                        <Modal
-                                            isOpen={this.state.modalIsOpen}
-                                            onAfterOpen={this.afterOpenModal}
-                                            onRequestClose={this.closeModal}
-                                            style={customStyles}
-                                            contentLabel="Specify packet">
-                                            <div className="col-md-12 panding_no">
-                                                <div className="boka-heading">Ange antal paneler</div>
-                                                <div className="f-right">
-                                                    <button className="close-button " onClick={this.closeModal}>X</button>
-                                                </div>
-                                            </div>
-                                            {this.state.panelCountValidation ?
-                                                (<div className="col-md-12 panels-valid-head">
-                                                    <div className="panels-count-validation">
-                                                        Panels range is {this.state.maximumPackets} - {this.state.minimumPackets}</div>
-                                                </div>) : (null)}
-                                            <form>
-                                                <div className="col-md-12 align-text-center slots-centering ">
-                                                    <div className="move-left">
-                                                        <div onClick={this.increment.bind(this)}>
-                                                            <img src="./img/caret-symbol.png" alt="increment" />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <input id='counter' value={this.state.packetsCount} onChange={this.countOfpanels} />
-                                                    </div>
-                                                    <div className="move-left">
-                                                        <div onClick={this.decrement.bind(this)}>
-                                                            <img src="./img/down-arrow.png" alt="decrement" /> </div>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-12 booking-buttons align-text-center">
-                                                    <button className="submit" onClick={this.closeModal}>Avbryt</button>
-                                                    <button className="submit" disabled={this.state.panelCountValidation} onClick={this.selectedCount.bind(this, '', this.state.packetsCount)}>Ok</button>
-                                                </div>
-                                            </form>
-                                        </Modal>
-                                    </div>
-                                ) : (null)}
-                                {this.panelsArray.map((data, index) => {
-                                    return (
-                                        <div className="col-sm-6 col-md-3 panding_no" key={index} onClick={this.selectedCount.bind(this, data.packet, data.count)} >
-                                            <div className="onfocs_brdr1 b-white" style={(data.packet == this.state.packetName) ? selectedStyle : matstyle}>
-                                                {(data.packet === "Custom paket" && data.count == "Ange antal paneler") ? (
-                                                    <div className='f21 text-capital specify-card'>{data.count}</div>
-                                                ) : (
-                                                        <div className='packets-font'>{data.count}</div>
-                                                    )}
-                                                <br />
-                                                <br />
-                                                <p className="m-top9">{data.packet}</p>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="col-md-12 col-sm-12 align-text-center">
-                                {this.state.packetPopup ? (
-                                    <div>
-                                        <div className="col-md-1"></div>
-                                        <div className="col-md-10 col-sm-12 panding_no panel-count-info-border">
-                                            <div className="col-sm-6 col-md-4 panding_no">
-                                                <div className="list-head">
-                                                    <p className="panel-count-info">MAX ANTAL SOLARPANELER<br />(Takyta har plats for)</p>
-                                                    <div className='panel-values-info'>
-                                                        {this.state.maximumPackets}</div>
-                                                </div>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 panding_no">
-                                                <div className="list-head">
-                                                    <p className="panel-count-info">VALT ANTAL SOLARPANELER</p>
-                                                    <br />
-                                                    <div className='panel-values-info'>{this.state.packetsCount}</div>
-                                                </div>
-                                            </div>
-                                            <div className="col-sm-6 col-md-4 panding_no">
-                                                <div className="list-head">
-                                                    <p className="panel-count-info">EFFEKT</p>
-                                                    <br />
-                                                    <div className='panel-values-info no-border'>{totalInstalledPowerInkw}
-                                                        <span> kWh</span></div>
-                                                </div>
-                                            </div>
-                                            {/* <div className="col-sm-6 col-md-3 panding_no">
-                                                <div className="list-head">
-                                                    <p className="panel-count-info">ÅRSPRODUKTION</p>
-                                                    <br />
-                                                    <div className='panel-values-info'>{parseInt(this.state.annualOutput)}
-                                                        <span> KWh</span>
-                                                    </div>
-                                                </div>
-                                            </div> */}
-                                        </div>
-                                    </div>
-                                ) : (
-                                        null
-                                    )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+               
             <div className="col-sm-12 estimate" style={{ textAlign: 'center', padding: '30px' }} >
                 <div className="flex justifyCenter">
                     <div className="padding1">

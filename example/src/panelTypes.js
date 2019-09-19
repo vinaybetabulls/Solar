@@ -450,8 +450,8 @@ class PanelComponent extends Component {
             smallRoofArea : smallRoofArea,
             normalRoofArea: normalRoofArea
         }))
-        
-       return normalRoofArea;
+        sessionStorage.setItem('smallRoofAreaValue',smallRoofArea)
+       return smallRoofArea;
     }
 
     componentWillUpdate(state, prop) {
