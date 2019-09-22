@@ -352,7 +352,6 @@ class PanelComponent extends Component {
     modalpopup() {
         this.setState({ popup: true, modalIsOpen: true })
     }
-
     selectedPanel(panel, cost, panelName) {
         
         if (panel === 'Standard') {
@@ -380,14 +379,6 @@ class PanelComponent extends Component {
         this.annualOutput(capacity, this.state.packetName, this.state.packetsCount)
     }
 
-    selectedBattery(battery, cost) {
-        this.setState({
-            battery: battery,
-            battery_cost: cost,
-            validationTwo: false
-        })
-    }
-
     selectedCount(name, count) {
         if (name == 'Custom paket' || name == 'Selected Paket' ) {
             this.setState({ popup: true, modalIsOpen: true, packetName: name })
@@ -402,7 +393,7 @@ class PanelComponent extends Component {
                 packetsCount: count,
                 validationThree: false,
                 value: count,
-                customPacket: parseInt(this.state.value),
+                customPacket: parseInt(this.state.packetsCount),
                 panelarrayUpdate: true,
                 modalIsOpen: false,
                 packetPopup: true,
@@ -423,7 +414,6 @@ class PanelComponent extends Component {
         }
         this.calculateRoofArea(name,this.roofArea)
     }
-
     calculateRoofArea(name,roofArea) {
         var smallRoofArea = 0;
         var normalRoofArea = 0;
@@ -444,14 +434,24 @@ class PanelComponent extends Component {
         if(name === 'Max paket') {
             var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
             smallRoofArea = (roofArea * 100)/100;
-            normalRoofArea = roofArea ;
+            normalRoofArea = (roofArea * 25)/100 ;
         }
         sessionStorage.setItem('roofAreaPkt',JSON.stringify({
             smallRoofArea : smallRoofArea,
             normalRoofArea: normalRoofArea
         }))
-        sessionStorage.setItem('smallRoofAreaValue',smallRoofArea)
+        
        return smallRoofArea;
+    }
+
+
+    
+    selectedBattery(battery, cost) {
+        this.setState({
+            battery: battery,
+            battery_cost: cost,
+            validationTwo: false
+        })
     }
 
     componentWillUpdate(state, prop) {

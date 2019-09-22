@@ -76,9 +76,17 @@ class PanelBatteryTypes extends Component {
             maximumPackets: 0,
             panelCountValidation: false,
             minimumPackets: 0,
-            soltakPanels:[],
-            soltakCustomPaket: 'Specify the area of soloar roof'
+            soltakCustomPaket: 'Specify the area of soloar roof',
+            panelName: sessionStorage.getItem('panelName') || '',
+            soltakPanelsArray : [
+                {packet: 'Small paket', count: Math.floor((parseInt(sessionStorage.getItem('roofarea')) / Math.cos(degrees_to_radians(parseInt(sessionStorage.getItem('roof_pitch')))) * 25 ) / 100 )},
+                {packet: 'Standard paket', count: Math.floor((parseInt(sessionStorage.getItem('roofarea')) / Math.cos(degrees_to_radians(parseInt(sessionStorage.getItem('roof_pitch')))) * 50 ) / 100) },
+                {packet: 'Max paket', count: Math.floor(parseInt(sessionStorage.getItem('roofarea')) / Math.cos(degrees_to_radians(parseInt(sessionStorage.getItem('roof_pitch')))) * 100 ) / 100 },
+            ]
+
+          
         }
+        this.soltakPanelsArray = this.state.soltakPanelsArray;
         this.modalpopup = this.modalpopup.bind(this)
         Modal.setAppElement('body');
         this.openModal = this.openModal.bind(this);
@@ -136,10 +144,11 @@ class PanelBatteryTypes extends Component {
             return degrees * (pi / 180);
         }
         var roofArea = parseInt(this.props.area) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+        
         this.soltakPanelsArray = [
-            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
-            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
-            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
+            {packet: 'Small paket', count: Math.floor((parseInt(sessionStorage.getItem('roofarea')) / Math.cos(degrees_to_radians(parseInt(sessionStorage.getItem('roof_pitch')))) * 25 ) / 100) },
+                {packet: 'Standard paket', count: Math.floor((parseInt(sessionStorage.getItem('roofarea')) / Math.cos(degrees_to_radians(parseInt(sessionStorage.getItem('roof_pitch')))) * 50 ) / 100) },
+                {packet: 'Max paket', count: Math.floor((parseInt(sessionStorage.getItem('roofarea')) / Math.cos(degrees_to_radians(parseInt(sessionStorage.getItem('roof_pitch')))) * 100 ) / 100 )},
             {packet:'Custom paket', count : 'Specify the area of solar roof'}
         ];
         if(name === 'Small paket') {
@@ -216,35 +225,7 @@ class PanelBatteryTypes extends Component {
             this.state.minimumPackets = parseInt(Standardpacket);
         }
     }
-    calculateRoofArea(name,roofArea) {
-        var smallRoofArea = 0;
-        var normalRoofArea = 0;
-        function degrees_to_radians(degrees) {
-            var pi = Math.PI;
-            return degrees * (pi / 180);
-        }
-        if(name === 'Small paket') {
-            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
-            smallRoofArea = (roofArea * 25)/100;
-            normalRoofArea = (roofArea * 75)/100;
-        }
-        if(name === 'Standard paket') {
-            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
-            smallRoofArea = (roofArea * 50)/100;
-            normalRoofArea = (roofArea * 50)/100;
-        }
-        if(name === 'Max paket') {
-            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
-            smallRoofArea = (roofArea * 100)/100;
-            normalRoofArea = (roofArea * 25)/100 ;
-        }
-        sessionStorage.setItem('roofAreaPkt',JSON.stringify({
-            smallRoofArea : smallRoofArea,
-            normalRoofArea: normalRoofArea
-        }))
-        
-       return normalRoofArea;
-    }
+   
     componentDidMount() {
         if (this.props.panel === 'Standard') {
             capacity = 270;
@@ -273,7 +254,7 @@ class PanelBatteryTypes extends Component {
     }
 
     selectedPanel(panel, cost, panelName) {
-        
+        sessionStorage.setItem('panelName',panelName)
         if (panel === 'Standard') {
             capacity = 270;
         } else if (panel === 'Premium') {
@@ -423,6 +404,48 @@ class PanelBatteryTypes extends Component {
         }
 
         if (packet) {
+            
+            this.setState({
+                panelName : sessionStorage.getItem('panelName')
+            })
+              function degrees_to_radians(degrees) {
+            var pi = Math.PI;
+            return degrees * (pi / 180);
+        }
+        function  calculateRoofArea1(name,roofArea) {
+            var smallRoofArea = 0;
+            var normalRoofArea = 0;
+            function degrees_to_radians(degrees) {
+                var pi = Math.PI;
+                return degrees * (pi / 180);
+            }
+            if(name === 'Small paket') {
+                smallRoofArea = (roofArea * 25)/100;
+                normalRoofArea = (roofArea * 75)/100;
+            }
+            if(name === 'Standard paket') {
+                smallRoofArea = (roofArea * 50)/100;
+                normalRoofArea = (roofArea * 50)/100;
+            }
+            if(name === 'Max paket') {
+                smallRoofArea = (roofArea * 100)/100;
+                normalRoofArea = (roofArea * 25)/100 ;
+            }
+            sessionStorage.setItem('roofAreaPkt',JSON.stringify({
+                smallRoofArea : smallRoofArea,
+                normalRoofArea: normalRoofArea
+            }))
+            
+           return smallRoofArea;
+        }
+        var roofArea = parseInt(this.props.area) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+        
+        this.soltakPanelsArray = [
+            {packet: 'Small paket', count: Math.floor(parseInt(calculateRoofArea1('Small paket',roofArea)))},
+            {packet: 'Standard paket', count: Math.floor(parseInt(calculateRoofArea1('Standard paket',roofArea)))},
+            {packet: 'Max paket', count: Math.floor(parseInt(calculateRoofArea1('Max paket',roofArea)))},
+            {packet:'Custom paket', count : 'Specify the area of solar roof'}
+        ];
             if(this.state.panelName == 'soltak') {
                 var packetValuesObject = this.soltakPanelsArray.filter(function (packetObj) {
                     return packetObj.packet === packet
@@ -460,19 +483,12 @@ class PanelBatteryTypes extends Component {
     }
 
     selectedCount(name, count) {
-        function degrees_to_radians(degrees) {
-            var pi = Math.PI;
-            return degrees * (pi / 180);
+       
+        if (name == 'Custom paket' || name == 'Selected Paket' ) {
+            this.setState({ popup: true, modalIsOpen: true, packetName: name })
         }
-        var roofArea = parseInt(this.props.area) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
-        this.soltakPanelsArray = [
-            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
-            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
-            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
-            {packet:'Custom paket', count : 'Specify the area of solar roof'}
-        ];
-        if (name == 'Custom paket' || name == 'Selected Paket') {
-            this.setState({ popup: true, modalIsOpen: true })
+        else if(name == 'Specify the area of solar roof') {
+            this.setState({ popup: true, modalIsOpen: true, packetName: name })
         } else if (name === '') {
             this.setState({
                 packetName: 'Custom paket',
@@ -483,7 +499,8 @@ class PanelBatteryTypes extends Component {
                 customPacket: parseInt(this.state.packetsCount),
                 panelarrayUpdate: true,
                 modalIsOpen: false,
-                packetPopup: true
+                packetPopup: true,
+                value: this.state.value,
             })
             this.annualOutput(capacity, 'Custom paket', count);
         } else {
@@ -494,25 +511,50 @@ class PanelBatteryTypes extends Component {
                 // value: count,
                 panelarrayUpdate: true,
                 customPacket: "Ange antal paneler",
-                packetPopup: true
+                packetPopup: true,
+                soltakCustomPaket: 'Specify the area of solar roof'
             })
+            this.annualOutput(capacity, name, count);
         }
-        this.annualOutput(capacity, name, count);
+        this.calculateRoofArea(anme, this, this.roofArea);
     }
-
-    componentWillUpdate(state, prop) {
-        
+    calculateRoofArea(name,roofArea) {
+        var smallRoofArea = 0;
+        var normalRoofArea = 0;
         function degrees_to_radians(degrees) {
             var pi = Math.PI;
             return degrees * (pi / 180);
         }
-        var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
-        this.soltakPanelsArray = [
-            {packet: 'Small paket', count: Math.floor(parseInt(this.calculateRoofArea('Small paket',roofArea)))},
-            {packet: 'Standard paket', count: Math.floor(parseInt(this.calculateRoofArea('Standard paket',roofArea)))},
-            {packet: 'Max paket', count: Math.floor(parseInt(this.calculateRoofArea('Max paket',roofArea)))},
-            {packet:'Custom paket', count : 'Specify the area of solar roof'}
-        ];
+        if(name === 'Small paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 25)/100;
+            normalRoofArea = (roofArea * 75)/100;
+        }
+        if(name === 'Standard paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 50)/100;
+            normalRoofArea = (roofArea * 50)/100;
+        }
+        if(name === 'Max paket') {
+            var roofArea = parseInt(this.props.roofarea) / Math.cos(degrees_to_radians(parseInt(this.props.roof_pitch)));
+            smallRoofArea = (roofArea * 100)/100;
+            normalRoofArea = (roofArea * 25)/100 ;
+        }
+        sessionStorage.setItem('roofAreaPkt',JSON.stringify({
+            smallRoofArea : smallRoofArea,
+            normalRoofArea: normalRoofArea
+        }))
+        
+       return normalRoofArea;
+    }
+   
+    componentWillUpdate(state, prop) {
+    //     let panel_name = sessionStorage.getItem('panel_name');
+    //     let panel_cost = sessionStorage.getItem('panel_cost');
+    //     let panelName = sessionStorage.getItem('panelName');
+
+    //  this.selectedPanel(panel_name,panel_cost,panelName)
+   
         let _self = this;
         setTimeout(update(prop), 2000);
         function update(props) {
