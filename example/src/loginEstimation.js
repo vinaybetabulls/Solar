@@ -175,9 +175,7 @@ class LoginEstimate extends Component {
             password: '123456',
             type: 'USER'
         }
-
-        console.log(JSON.stringify(payload))
-        fetch('http://localhost:80/users/userLogin', {
+        fetch('users/userLogin', {
             method: "post", headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 "Access-Control-Request-Headers": "*",
@@ -188,7 +186,6 @@ class LoginEstimate extends Component {
                 return response;
             })
             .then(function (response) {
-                console.log(response)
                 return response.json();
             }).then(function (data) {
                 if (data.status === 400) {

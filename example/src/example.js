@@ -52,6 +52,7 @@ class Routing extends Component {
     this.setState({
       Login: val
     })
+    window.location.reload();
   }
 
   render() {
